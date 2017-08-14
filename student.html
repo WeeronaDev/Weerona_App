@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Wee-meals</title>
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+	<link rel ="javascript" type = "text/javascript" href ="interact.js">
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+</head>
+
+
+<body>
+
+<h1>Wee-meals</h1>
+<h2>Staff<h2>
+
+<p>Select main meal option:</p>
+
+<form action="">
+  <input type="checkbox" name="main_select" value="main1"> Main1<br>
+  <input type="checkbox" name="main_select" value="main2"> Main2<br>
+  <input type="checkbox" name="main_select" value="veg"> Vegetarian<br>
+  <input type="checkbox" name="main_select" value="veg"> Fish<br>
+  <input type="checkbox" name="main_select" value="veg"> Vegetables<br>
+  <input type="checkbox" name="main_select" value="veg"> Salad<br>
+  <input type="checkbox" name="main_select" value="veg"> Dessert<br>
+</form>
+
+<p>Select dessert option:</p>
+
+<form action="">
+  <input type="checkbox" name="dessert_select" value="veg"> Dessert<br>
+  <input type="checkbox" name="dessert_select" value="veg"> No dessert<br>
+  <input type="submit" name="submit" value ="submit meal">
+</form>
+
+<a href="index.html">Back</a>
+
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCu-niq7rlwyF6PGbrwNPzy9BSzP6o6z5M",
+    authDomain: "weeronaapp.firebaseapp.com",
+    databaseURL: "https://weeronaapp.firebaseio.com",
+    projectId: "weeronaapp",
+    storageBucket: "weeronaapp.appspot.com",
+    messagingSenderId: "1093710876765"
+  };
+  firebase.initializeApp(config);
+</script>
+</body>
+</html>
