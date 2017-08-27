@@ -72,7 +72,7 @@
 					var veg = document.getElementById("veg").checked;
 					var salad = document.getElementById("salad").checked;
 					var des = document.getElementById("des").checked;
-					var name = "Luke";
+					var name = console.log(user.displayName);
 					firebase.database().ref('orders/' + user.uid).set({
 						user: user.displayName,
 						main1: main1,
