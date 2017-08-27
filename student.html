@@ -103,6 +103,7 @@
 			var dbFoodRef = firebase.database().ref('orders');
 			dbFoodRef.on('child_added', function(snap){
 				var tr = $("<tr></tr>");
+				tr.append($("<td></td>").text(snap.val().user));
 				tr.append($("<td></td>").text(snap.val().main1));
 				tr.append($("<td></td>").text(snap.val().main2));
 				tr.append($("<td></td>").text(snap.val().vegan));
@@ -110,7 +111,6 @@
 				tr.append($("<td></td>").text(snap.val().veg));
 				tr.append($("<td></td>").text(snap.val().salad));
 				tr.append($("<td></td>").text(snap.val().des));
-				tr.append($("<td></td>").text(snap.val().user));
 				$("#orders").append(tr);
 			});
 		});
@@ -298,6 +298,7 @@
 		<br>
 		<table border='1' id="orders">
 			<tr>
+				<th>Name</th>
 				<th>Main1</th>
 				<th>Main2</th>
 				<th>Vegetarian</th>
