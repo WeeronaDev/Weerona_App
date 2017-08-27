@@ -51,7 +51,15 @@
 			document.getElementById("btnSubmit").addEventListener("click", function(submit) {
 				var user = firebase.auth().currentUser;
 				if (user) {
-				// User is signed in.								
+					// User is signed in.	
+					var currentDate = new Date(); 
+					var date = currentDate.getDate() + "/"
+					+ (currentDate.getMonth()+1)  + "/" 
+					+ currentDate.getFullYear();
+					var time = currentDate.getHours() + ":"  
+					+ currentDate.getMinutes() + ":" 
+					+ currentDate.getSeconds();	
+								
 					submit.preventDefault();				
 					var main1 = document.getElementById("main1").checked;
 					var main2 = document.getElementById("main2").checked;
@@ -62,6 +70,8 @@
 					var des = document.getElementById("des").checked;
 					var name = console.log(user.displayName);
 					firebase.database().ref('orders/' + user.uid).set({
+						date: date,
+						time: time,
 						user: user.displayName,
 						main1: main1,
 						main2: main2,
@@ -90,7 +100,8 @@
 				console.log("Signed out");
 				$("#welcome_banner").hide();
 				$("#login_banner").show();
-				$("#logout_banner").show();					
+				$("#logout_banner").show();	
+				window.location.replace("index.html");				
 			}).catch(function(error) {
 				console.log("Error signing out");
 			});
@@ -258,7 +269,8 @@
 			</div>
 			
 			<br>
-			<a href="index.html">BACK</a>
+			<a href="index.html">Login</a>
+			<a href="staff.html">Staff</a>
 		</div>
 		
 		<div id="content_right">

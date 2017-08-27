@@ -52,7 +52,8 @@
 				console.log("Signed out");
 				$("#welcome_banner").hide();
 				$("#login_banner").show();
-				$("#logout_banner").show();					
+				$("#logout_banner").show();		
+				window.location.replace("index.html");				
 			}).catch(function(error) {
 				console.log("Error signing out");
 			});
@@ -63,6 +64,8 @@
 		var dbFoodRef = firebase.database().ref('orders');
 		dbFoodRef.on('child_added', function(snap){
 			var tr = $("<tr></tr>");
+			tr.append($("<td></td>").text(snap.val().date));
+			tr.append($("<td></td>").text(snap.val().time));
 			tr.append($("<td></td>").text(snap.val().user));
 			tr.append($("<td></td>").text(snap.val().main1));
 			tr.append($("<td></td>").text(snap.val().main2));
@@ -107,6 +110,8 @@
 		<br>
 		<table border='1' id="orders">
 			<tr>
+				<th>Date</th>
+				<th>Time</th>
 				<th>Name</th>
 				<th>Main1</th>
 				<th>Main2</th>
