@@ -2,38 +2,196 @@
 <html lang="en">
 
 <head>
-	<title>Wee-meals</title>
-	<link rel="Shortcut Icon" href="favicon.ico" />
-	<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
-	<link rel ="javascript" type = "text/javascript" href ="interact.js">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WEE-MEALS - Login</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="css_login.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-
-
+	<script async>
+		// Initialize Firebase
+		$(function() {
+			console.log("initialize database");
+			var config = {
+				apiKey: "AIzaSyCu-niq7rlwyF6PGbrwNPzy9BSzP6o6z5M",
+				authDomain: "weeronaapp.firebaseapp.com",
+				databaseURL: "https://weeronaapp.firebaseio.com",
+				projectId: "weeronaapp",
+				storageBucket: "weeronaapp.appspot.com",
+				messagingSenderId: "1093710876765"
+			};
+			firebase.initializeApp(config);
+			var database = firebase.database();
+		});
+	</script>
 </head>
 
-
 <body>
+	<script async>
+		$(function() {		
+			//Check initial auth status		
+			firebase.auth().onAuthStateChanged(function(user) {
+				if (user) {
+					// User is signed in.						
+					console.log("initial auth: user logged in as "+user.displayName);	
+					$("#welcome_banner").show();
+					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");	
+				} else {
+					// No user is signed in.
+					console.log("initial auth: user not logged in");	
+					$("#login_banner").show();
+				}
+			});		
+			
+			//Log-In With Google
+			document.getElementById("btnLoginGoogle").addEventListener("click", function(signIn) {			
+				var provider = new firebase.auth.GoogleAuthProvider();						
+				console.log("google sign in!");					
+				firebase.auth().signInWithPopup(provider).then(function(result) {
+					// This gives you a Google Access Token. You can use it to access the Google API.
+					var token = result.credential.accessToken;
+					// The signed-in user info.
+					user = result.user;
+					console.log("Logged in as: "+user.displayName);	
+					setUserDatabaseEntry(user);
+					setAuthStatus(user);
+					// ...
+				}).catch(function(error) {				
+					// Handle Errors here.
+					var errorCode = error.code;
+					console.log(error.code);	
+					
+					var errorMessage = error.message;
+					console.log(error.message);	
+					
+					// The email of the user's account used.
+					var email = error.email;
+					console.log(error.email);
+					
+					// The firebase.auth.AuthCredential type that was used.
+					var credential = error.credential;
+					console.log(error.credential);
+					// ...
+					$("#logout_banner").hide();	
+					$("#error_banner").show();
+					$("#errorText").html("There was a problem signing in with Google: "+errorCode);
+				});
+			});
+				
+			//Log-In With Facebook
+			document.getElementById("btnLoginFacebook").addEventListener("click", function(signIn) {			
+				var provider = new firebase.auth.FacebookAuthProvider();						
+				console.log("Facebook Sign-In");					
+				firebase.auth().signInWithPopup(provider).then(function(result) {
+					// This gives you a Google Access Token. You can use it to access the Google API.
+					var token = result.credential.accessToken;
+					// The signed-in user info.
+					user = result.user;
+					console.log("Logged in as: "+user.displayName);	
+					setUserDatabaseEntry(user);
+					setAuthStatus(user);
+					// ...
+				}).catch(function(error) {
+					// Handle Errors here.
+					var errorCode = error.code;
+					console.log(error.code);	
+					
+					var errorMessage = error.message;
+					console.log(error.message);	
+					
+					// The email of the user's account used.
+					var email = error.email;
+					console.log(error.email);
+					
+					// The firebase.auth.AuthCredential type that was used.
+					var credential = error.credential;
+					console.log(error.credential);
+					// ...
+					$("#logout_banner").hide();	
+					$("#error_banner").show();
+					$("#errorText").html("There was a problem signing in with Facebook: "+errorCode);
+				});
+			});
+			
+			//Auth status banner
+			function setAuthStatus(user) {
+				$("#error_banner").hide();
+				$("#login_banner").hide();
+				$("#logout_banner").hide();	
+				$("#welcome_banner").show();
+				$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");
+			};
+			
+			//Sign-out
+			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
+				firebase.auth().signOut().then(function() {
+					console.log("Signed out");
+					$("#welcome_banner").hide();
+					$("#login_banner").show();
+					$("#logout_banner").show();					
+				}).catch(function(error) {
+					console.log("Error signing out");
+				});
+			});							
+			
+			//User entry
+			function setUserDatabaseEntry(user) {
+				firebase.database().ref('users/' + user.uid).set({
+					id: user.uid,
+					username: user.displayName,
+					email: user.email,
+					emailVerified: user.emailVerified,
+					isAnonymous: user.isAnonymous,
+					phoneNumber: user.phoneNumber,
+					photoURL: user.photoURL,
+					providerData: user.providerData,
+					providerID: user.providerId,
+					refreshToken: user.refreshToken
+				});
+			};	
+		});
+	</script>
 
-<h1>Main Page<h2>
-
-<p>Select an option:</p>
-
-<a href="staff.html">Staff</a>
-
-<a href="student.html">Students</a>
-
-
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyCu-niq7rlwyF6PGbrwNPzy9BSzP6o6z5M",
-    authDomain: "weeronaapp.firebaseapp.com",
-    databaseURL: "https://weeronaapp.firebaseio.com",
-    projectId: "weeronaapp",
-    storageBucket: "weeronaapp.appspot.com",
-    messagingSenderId: "1093710876765"
-  };
-  firebase.initializeApp(config);
-</script>
+	<div id="header">
+		<h1>WEE-MEALS Login</h1>
+	</div>
+		
+	<div id="login_banner">
+		<p>You are not logged in!</p>
+	</div>
+	
+	<div id="welcome_banner">
+		<p id="welcomeText"></p>
+		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
+	</div>
+	
+	<div id="error_banner">
+		<p id="errorText"></p>
+	</div>
+	
+	<div id="logout_banner">
+		<p>You have been logged out!</p>
+	</div>
+	
+	<div id="content_top">
+		<br>
+		<p>Please select the login provider you would like to use:</p>
+		<br><br><br>
+		
+		<input type="submit" id="btnLoginGoogle" name="googleLogin" value ="Log-In With Google">
+		<input type="submit" id="btnLoginFacebook" name="facebookLogin" value ="Log-In With Facebook">	
+		<br><br><br>
+	</div>
+	
+	<div id="content_bottom">
+			<p>Already logged in?</p>
+			<br><br>
+			<a href="student.html">Students - Place late meal order</a>
+			<br><br>
+			<a href="staff.html">Staff - Manage late meal orders</a>
+			<br><br>
+		</div>
 </body>
 </html>

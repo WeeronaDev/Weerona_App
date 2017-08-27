@@ -2,53 +2,316 @@
 <html lang="en">
 
 <head>
-	<title>Wee-meals</title>
-	<link rel="Shortcut Icon" href="favicon.ico" />
-	<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
-	<link rel ="javascript" type = "text/javascript" href ="interact.js">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WEE-MEALS - Students</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="css_student.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+	<script async>
+		// Initialize Firebase
+		$(function() {
+			console.log("initialize database");
+			var config = {
+				apiKey: "AIzaSyCu-niq7rlwyF6PGbrwNPzy9BSzP6o6z5M",
+				authDomain: "weeronaapp.firebaseapp.com",
+				databaseURL: "https://weeronaapp.firebaseio.com",
+				projectId: "weeronaapp",
+				storageBucket: "weeronaapp.appspot.com",
+				messagingSenderId: "1093710876765"
+			};
+			firebase.initializeApp(config);
+			var database = firebase.database();
+		});
+	</script>
 </head>
 
-
 <body>
+<div id="global">	
 
-<h1>Wee-meals</h1>
-<h2>Staff<h2>
+	<script async>
+		$(function() {		
+			//Check initial auth status		
+			firebase.auth().onAuthStateChanged(function(user) {
+				if (user) {
+					// User is signed in.						
+					console.log("initial auth: user logged in as "+user.displayName);	
+					$("#welcome_banner").show();
+					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");	
+				} else {
+					// No user is signed in.
+					console.log("initial auth: user not logged in");	
+					$("#login_banner").show();
+				}
+			});
+			
+			//Sign-out
+			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
+				firebase.auth().signOut().then(function() {
+					console.log("Signed out");
+					$("#welcome_banner").hide();
+					$("#login_banner").show();
+					$("#logout_banner").show();					
+				}).catch(function(error) {
+					console.log("Error signing out");
+				});
+			});							
 
-<p>Select main meal option:</p>
+			// Order entry			
+			document.getElementById("btnSubmit").addEventListener("click", function(submit) {
+				var user = firebase.auth().currentUser;
+				if (user) {
+				// User is signed in.								
+					submit.preventDefault();				
+					var main1 = document.getElementById("main1").checked;
+					var main2 = document.getElementById("main2").checked;
+					var vegan = document.getElementById("vegan").checked;
+					var fish = document.getElementById("fish").checked;
+					var veg = document.getElementById("veg").checked;
+					var salad = document.getElementById("salad").checked;
+					var des = document.getElementById("des").checked;
+					firebase.database().ref('orders/' + user.uid).set({
+						user: user.displayName,
+						main1: main1,
+						main2: main2,
+						vegan: vegan,
+						fish: fish,
+						veg: veg,
+						salad: salad,
+						des: des
+					});
+					console.log("order submitted successfully!");
+					$('#submit_notify').slideDown(200);	
+				} else {
+				// No user is signed in.
+					submit.preventDefault();
+					$("#submit_notify").hide();	
+					$("#logout_banner").hide();	
+					$("#error_banner").show();
+					$("#errorText").html("Please sign in to continue.");
+					console.log("cannot submit order: user not signed in!");
+				}								
+			});								
+		});
+	</script>
+	
+	<script async>
+		// Database read
+		$(function(read) {
+			console.log("retrieve meal");
+			var dbFoodRef = firebase.database().ref('orders');
+			dbFoodRef.on('child_added', function(snap){
+				var tr = $("<tr></tr>");
+				tr.append($("<td></td>").text(snap.val().main1));
+				tr.append($("<td></td>").text(snap.val().main2));
+				tr.append($("<td></td>").text(snap.val().vegan));
+				tr.append($("<td></td>").text(snap.val().fish));
+				tr.append($("<td></td>").text(snap.val().veg));
+				tr.append($("<td></td>").text(snap.val().salad));
+				tr.append($("<td></td>").text(snap.val().des));
+				$("#orders").append(tr);
+			});
+		});
+	</script>
+	
+	<script async>
+		// Dropdown menu animation
+		$(function() {
+			$('ul.drop_menu_parent>li').hover(function() {
+				$(this).children('ul').stop().toggle(200);
+			});
+		});
+	</script>
+	
+	<script async>
+		// Side menu animation
+		$(function() {
+			$('ul.side_menu_parent>li').click(function() {
+				$(this).children('ul').stop().slideToggle(200);
+			});
+		});
+	</script>
+	
+	<script async>
+		//Page display animation
+		$(function() {
+			$('#body, #content_left, #content_right').slideDown(200);
+			$('#output').slideDown(1000);
+		});
+	</script>
+	
+	<div id="header">
+		<div id="head_title">
+			<div id="title_image">
+				<img src="logo-72x72.png" alt="Weerona Logo" style="width:72px;height:72px;">
+			</div>
+			<div id="title_text">
+				<h1>WEE-MEALS</h1>
+			</div>
+		</div>
+		<div id="head_logout">
+			<h2><a href="index.html">LOGOUT</a></h2>
+		</div>
+	</div>			
+	
+	<div id="navigation">
+		<p>You are here: <a href="index.html">Home</a> >> <a href="student.html">Residents - Place late meal order</a></p>
+	</div>
+	
+	<div id="login_banner">
+		<p>You are not logged in!</p>
+		<form action="index.html">
+			<input type="submit" value="Log-In" />
+		</form>
+	</div>
+	
+	<div id="welcome_banner">
+		<p id="welcomeText"></p>
+		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
+	</div>
+	
+	<div id="error_banner">
+		<p id="errorText"></p>
+	</div>
+	
+	<div id="logout_banner">
+		<p>You have been logged out!</p>
+	</div>
+	
+	<div id="drop_menu">
+		<ul class="drop_menu_parent">
+			<li>BLA BLA BLA
+				<ul class="drop_menu_child">
+					<li>Not more  Stuff</li>
+				</ul>
+			</li>
+			<li>Students
+				<ul class="drop_menu_child">
+					<li><a href="student.html">Residents - Place late meal order</a></li>
+					<li><a href="http://www.uow.edu.au/index.html">UOW Homepage</a></li>
+					<li>LIIIIIIIINKS!!!!!</li>
+					<li>XDDDDDDDDDDDDDDDD</li>
+				</ul>
+			</li>
+			<li>Staff
+				<ul class="drop_menu_child">
+					<li>Item 1</li>
+					<li>Item 2</li>
+					<li>Item 3</li>
+					<li>Item 4</li>
+				</ul>
+			</li>
+			<li>Other
+				<ul class="drop_menu_child">
+					<li>More Stuff</li>
+				</ul>
+			</li>
+			<li>Other x 2
+				<ul class="drop_menu_child">
+					<li>More Stuff</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
 
-<form action="">
-  <input type="checkbox" name="main_select" value="main1"> Main1<br>
-  <input type="checkbox" name="main_select" value="main2"> Main2<br>
-  <input type="checkbox" name="main_select" value="veg"> Vegetarian<br>
-  <input type="checkbox" name="main_select" value="veg"> Fish<br>
-  <input type="checkbox" name="main_select" value="veg"> Vegetables<br>
-  <input type="checkbox" name="main_select" value="veg"> Salad<br>
-  <input type="checkbox" name="main_select" value="veg"> Dessert<br>
-</form>
+	<!--<div id="side_menu">
+		<ul class="side_menu_parent">
+			<li>Home
+				<ul class="side_menu_child">
+					<li>More Stuff</li>
+				</ul>
+			</li>
+			<li>Students
+				<ul class="side_menu_child">
+					<li><a href="student.html">Residents - Place late meal order</a></li>
+					<li><a href="http://www.uow.edu.au/index.html">UOW Homepage</a></li>
+					<li>LIIIIIIIINKS!!!!!</li>
+					<li>XDDDDDDDDDDDDDDDD</li>
+				</ul>
+			</li>
+			<li>Staff
+				<ul class="side_menu_child">
+					<li>Item 1</li>
+					<li>Item 2</li>
+					<li>Item 3</li>
+					<li>Item 4</li>
+				</ul>
+			</li>
+			<li>Other
+				<ul class="side_menu_child">
+					<li>More Stuff</li>
+				</ul>
+			</li>
+			<li>Other x 2
+				<ul class="side_menu_child">
+					<li>More Stuff</li>
+				</ul>
+			</li>
+		</ul>
+	</div>-->	
+	
+	<div id="body">	
+		<div id="content_left">
+			
+			<h3><img id='meal_icon' src="utensils-60x60.png" alt="Place late meal order" style="width:60px;height:60px;">PLACE LATE MEAL ORDER</h3>
+			<p>Please choose one or more meal options:</p>
+			<br>
 
-<p>Select dessert option:</p>
-
-<form action="">
-  <input type="checkbox" name="dessert_select" value="veg"> Dessert<br>
-  <input type="checkbox" name="dessert_select" value="veg"> No dessert<br>
-  <input type="submit" name="submit" value ="submit meal">
-</form>
-
-<a href="index.html">Back</a>
-
-
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyCu-niq7rlwyF6PGbrwNPzy9BSzP6o6z5M",
-    authDomain: "weeronaapp.firebaseapp.com",
-    databaseURL: "https://weeronaapp.firebaseio.com",
-    projectId: "weeronaapp",
-    storageBucket: "weeronaapp.appspot.com",
-    messagingSenderId: "1093710876765"
-  };
-  firebase.initializeApp(config);
-</script>
+			<form action="">
+				<input type="checkbox" id="main1" name="main1" value="true"> Main1<br>
+				<input type="checkbox" id="main2" name="main2" value="true"> Main2<br>
+				<input type="checkbox" id="vegan" name="vegan" value="true"> Vegetarian<br>
+				<input type="checkbox" id="fish" name="fish" value="true"> Fish<br>
+				<input type="checkbox" id="veg" name="veg" value="true"> Vegetables<br>
+				<input type="checkbox" id="salad" name="salad" value="true"> Salad<br>
+				<input type="checkbox" id="des" name="des" value="true"> Dessert<br>
+				<br>
+				<input type="submit" id="btnSubmit" name="submit" value ="Submit">
+			</form>
+			
+			<div id="submit_notify">
+				<p>Submitted meal order.</p>
+			</div>
+			
+			<br>
+			<a href="index.html">BACK</a>
+		</div>
+		
+		<div id="content_right">
+			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">MEAL CALENDAR</h3>
+			<table>
+			<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+			<tr><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td></tr>
+			<tr><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td></tr>
+			<tr><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td></tr>
+			<tr><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td></tr>
+			</table>
+		</div>
+	</div>
+	
+	<div id="output">
+		<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
+		<p>Current late meal orders...</p>
+		<br>
+		<table border='1' id="orders">
+			<tr>
+				<th>Main1</th>
+				<th>Main2</th>
+				<th>Vegetarian</th>
+				<th>Fish</th>
+				<th>Vegetables</th>
+				<th>Salad</th>
+				<th>Dessert</th>
+			</tr>
+		</table>
+	</div>
+	
+	<div id="footer">
+		<p>Weerona College - Page Footer</p>
+		<p>Stuff here...</p>
+	</div>
+</div>	
 </body>
 </html>
