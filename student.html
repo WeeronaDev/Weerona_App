@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,18 +47,6 @@
 				}
 			});
 			
-			//Sign-out
-			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
-				firebase.auth().signOut().then(function() {
-					console.log("Signed out");
-					$("#welcome_banner").hide();
-					$("#login_banner").show();
-					$("#logout_banner").show();					
-				}).catch(function(error) {
-					console.log("Error signing out");
-				});
-			});							
-
 			// Order entry			
 			document.getElementById("btnSubmit").addEventListener("click", function(submit) {
 				var user = firebase.auth().currentUser;
@@ -71,6 +60,7 @@
 					var veg = document.getElementById("veg").checked;
 					var salad = document.getElementById("salad").checked;
 					var des = document.getElementById("des").checked;
+					var name = console.log(user.displayName);
 					firebase.database().ref('orders/' + user.uid).set({
 						user: user.displayName,
 						main1: main1,
@@ -92,29 +82,20 @@
 					$("#errorText").html("Please sign in to continue.");
 					console.log("cannot submit order: user not signed in!");
 				}								
-			});								
-		});
-	</script>
-	
-	<script async>
-		// Database read
-		$(function(read) {
-			console.log("retrieve meal");
-			var dbFoodRef = firebase.database().ref('orders');
-			dbFoodRef.on('child_added', function(snap){
-				var tr = $("<tr></tr>");
-				tr.append($("<td></td>").text(snap.val().user));
-				tr.append($("<td></td>").text(snap.val().main1));
-				tr.append($("<td></td>").text(snap.val().main2));
-				tr.append($("<td></td>").text(snap.val().vegan));
-				tr.append($("<td></td>").text(snap.val().fish));
-				tr.append($("<td></td>").text(snap.val().veg));
-				tr.append($("<td></td>").text(snap.val().salad));
-				tr.append($("<td></td>").text(snap.val().des));
-				tr.append($("<td></td>").text(snap.val().user));
-				$("#orders").append(tr);
+			});	
+
+			//Sign-out
+		document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
+			firebase.auth().signOut().then(function() {
+				console.log("Signed out");
+				$("#welcome_banner").hide();
+				$("#login_banner").show();
+				$("#logout_banner").show();					
+			}).catch(function(error) {
+				console.log("Error signing out");
 			});
-		});
+		});										
+	});
 	</script>
 	
 	<script async>
@@ -158,7 +139,7 @@
 	</div>			
 	
 	<div id="navigation">
-		<p>You are here: <a href="index.html">Home</a> >> <a href="student.html">Residents - Place late meal order</a></p>
+		<p>You are here: <a href="index.html">WEE-MEALS Login</a> >> <a href="student.html">Residents - Place late meal order</a></p>
 	</div>
 	
 	<div id="login_banner">
@@ -290,25 +271,6 @@
 			<tr><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td></tr>
 			</table>
 		</div>
-	</div>
-	<p>hi</p>
-	
-	<div id="output">
-		<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
-		<p>Current late meal orders...</p>
-		<br>
-		<table border='1' id="orders">
-			<tr>
-				<th>Name</th>
-				<th>Main1</th>
-				<th>Main2</th>
-				<th>Vegetarian</th>
-				<th>Fish</th>
-				<th>Vegetables</th>
-				<th>Salad</th>
-				<th>Dessert</th>
-			</tr>
-		</table>
 	</div>
 	
 	<div id="footer">

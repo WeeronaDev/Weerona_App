@@ -109,19 +109,6 @@ body {
 	margin: 0px;
 	background-color: #CAEBF2;
 }
-#output {
-	display: none;
-	width: 970px;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	padding-left: 30px;
-	padding-right: 0px;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: pink;
-}
 #meal_icon {
 	display: inline;
 }
@@ -147,6 +134,18 @@ body {
 	margin-right: auto;
 	background-color: orange;
 }
+#welcome_banner {
+	display: none;
+	width: 980px;
+	height: 50px;
+	padding-top: 10px;
+	padding-left: 20px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: green;
+}
 #error_banner {
 	display: none;
 	width: 980px;
@@ -163,18 +162,6 @@ body {
 	display: none;
 	width: 980px;
 	height: 25px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: green;
-}
-#welcome_banner {
-	display: none;
-	width: 980px;
-	height: 50px;
 	padding-top: 10px;
 	padding-left: 20px;
 	margin-top: 0px;
