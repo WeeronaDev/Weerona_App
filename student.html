@@ -49,6 +49,7 @@
 			
 			// Order entry			
 			document.getElementById("btnSubmit").addEventListener("click", function(submit) {
+				submit.preventDefault();	
 				var user = firebase.auth().currentUser;
 				if (user) {
 					// User is signed in.	
@@ -59,8 +60,7 @@
 					var time = currentDate.getHours() + ":"  
 					+ currentDate.getMinutes() + ":" 
 					+ currentDate.getSeconds();	
-								
-					submit.preventDefault();				
+											
 					var main1 = document.getElementById("main1").checked;
 					var main2 = document.getElementById("main2").checked;
 					var vegan = document.getElementById("vegan").checked;
@@ -85,7 +85,6 @@
 					$('#submit_notify').slideDown(200);	
 				} else {
 				// No user is signed in.
-					submit.preventDefault();
 					$("#submit_notify").hide();	
 					$("#logout_banner").hide();	
 					$("#error_banner").show();

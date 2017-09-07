@@ -60,6 +60,18 @@ body {
 	margin-right: auto;
 	background-color: green;
 }
+#error_banner {
+	display: none;
+	width: 980px;
+	height: 25px;
+	padding-top: 10px;
+	padding-left: 20px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: red;
+}
 #logout_banner {
 	display: none;
 	width: 980px;

@@ -60,24 +60,37 @@
 		});	
 
 		//Database read
-		console.log("retrieve meals");
-		var dbFoodRef = firebase.database().ref('orders');
-		dbFoodRef.on('child_added', function(snap){
-			var tr = $("<tr></tr>");
-			tr.append($("<td></td>").text(snap.val().date));
-			tr.append($("<td></td>").text(snap.val().time));
-			tr.append($("<td></td>").text(snap.val().user));
-			tr.append($("<td></td>").text(snap.val().main1));
-			tr.append($("<td></td>").text(snap.val().main2));
-			tr.append($("<td></td>").text(snap.val().vegan));
-			tr.append($("<td></td>").text(snap.val().fish));
-			tr.append($("<td></td>").text(snap.val().veg));
-			tr.append($("<td></td>").text(snap.val().salad));
-			tr.append($("<td></td>").text(snap.val().des));
-			$("#orders").append(tr);
-			$("#order_load").hide();
+		document.getElementById("btnGetOrders").addEventListener("click", function(submit) {
+			submit.preventDefault();
+			var user = firebase.auth().currentUser;
+			if (user) {
+				// User is signed in.	
+				var dbFoodRef = firebase.database().ref('orders');
+				dbFoodRef.on('child_added', function(snap){
+					var tr = $("<tr></tr>");
+					tr.append($("<td></td>").text(snap.val().date));
+					tr.append($("<td></td>").text(snap.val().time));
+					tr.append($("<td></td>").text(snap.val().user));
+					tr.append($("<td></td>").text(snap.val().main1));
+					tr.append($("<td></td>").text(snap.val().main2));
+					tr.append($("<td></td>").text(snap.val().vegan));
+					tr.append($("<td></td>").text(snap.val().fish));
+					tr.append($("<td></td>").text(snap.val().veg));
+					tr.append($("<td></td>").text(snap.val().salad));
+					tr.append($("<td></td>").text(snap.val().des));
+					$("#orders").append(tr);
+					$("#order_load").hide();
+				});	
+				console.log("retrieved meal");
+			} else {
+				// No user is signed in.
+				$("#error_banner").show();
+				$("#errorText").html("You do not have permission to access this resource.");
+				console.log("cannot read orders: user not signed in!");
+			}		
 		});		
 	});
+
 	</script>
 	
 	<div id="header">
@@ -100,6 +113,10 @@
 		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 	</div>
 	
+	<div id="error_banner">
+		<p id="errorText"></p>
+	</div>
+
 	<div id="logout_banner">
 		<p>You have been logged out!</p>
 	</div>
@@ -123,6 +140,11 @@
 			</tr>
 		</table>
 		<br>
+
+		<form action="">
+			<input type="submit" id="btnGetOrders" name="get_orders" value ="Retrieve Orders">
+		</form>
+
 		<div id="order_load">
 			<p><b>Loading orders...Please wait</b></p>
 		</div>
