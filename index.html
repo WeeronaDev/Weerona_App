@@ -35,7 +35,7 @@
 			//Check initial auth status		
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-					// User is signed in.
+					// User is signed in, Redirect to relevant page
 					if (user.permission == 0) {
 						window.location.replace("https://weeronaapp.firebaseapp.com/student.html");
 					} else if (user.permission == 1) {
