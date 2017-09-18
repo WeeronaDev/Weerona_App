@@ -28,8 +28,7 @@
 	</script>
 </head>
 
-<body>
-<div id="global">	
+<body>	
 
 	<script async>
 		$(function() {		
@@ -133,161 +132,62 @@
 			$('#output').slideDown(1000);
 		});
 	</script>
-	
-	<div id="header">
-		<div id="head_title">
-			<div id="title_image">
-				<img src="logo-72x72.png" alt="Weerona Logo" style="width:72px;height:72px;">
-			</div>
-			<div id="title_text">
-				<h1>WEE-MEALS</h1>
-			</div>
-		</div>
-		<div id="head_logout">
-			<h2><a href="index.html">LOGOUT</a></h2>
-		</div>
-	</div>			
-	
-	<div id="navigation">
-		<p>You are here: <a href="index.html">WEE-MEALS Login</a> >> <a href="student.html">Residents - Place late meal order</a></p>
-	</div>
-	
-	<div id="login_banner">
-		<p>You are not logged in!</p>
-		<form action="index.html">
-			<input type="submit" value="Log-In" />
-		</form>
-	</div>
-	
-	<div id="welcome_banner">
-		<p id="welcomeText"></p>
-		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
-	</div>
-	
-	<div id="error_banner">
-		<p id="errorText"></p>
-	</div>
-	
-	<div id="logout_banner">
-		<p>You have been logged out!</p>
-	</div>
-	
-	<div id="drop_menu">
-		<ul class="drop_menu_parent">
-			<li>BLA BLA BLA
-				<ul class="drop_menu_child">
-					<li>Not more  Stuff</li>
-				</ul>
-			</li>
-			<li>Students
-				<ul class="drop_menu_child">
-					<li><a href="student.html">Residents - Place late meal order</a></li>
-					<li><a href="http://www.uow.edu.au/index.html">UOW Homepage</a></li>
-					<li>LIIIIIIIINKS!!!!!</li>
-					<li>XDDDDDDDDDDDDDDDD</li>
-				</ul>
-			</li>
-			<li>Staff
-				<ul class="drop_menu_child">
-					<li>Item 1</li>
-					<li>Item 2</li>
-					<li>Item 3</li>
-					<li>Item 4</li>
-				</ul>
-			</li>
-			<li>Other
-				<ul class="drop_menu_child">
-					<li>More Stuff</li>
-				</ul>
-			</li>
-			<li>Other x 2
-				<ul class="drop_menu_child">
-					<li>More Stuff</li>
-				</ul>
-			</li>
-		</ul>
-	</div>
-
-	<!--<div id="side_menu">
-		<ul class="side_menu_parent">
-			<li>Home
-				<ul class="side_menu_child">
-					<li>More Stuff</li>
-				</ul>
-			</li>
-			<li>Students
-				<ul class="side_menu_child">
-					<li><a href="student.html">Residents - Place late meal order</a></li>
-					<li><a href="http://www.uow.edu.au/index.html">UOW Homepage</a></li>
-					<li>LIIIIIIIINKS!!!!!</li>
-					<li>XDDDDDDDDDDDDDDDD</li>
-				</ul>
-			</li>
-			<li>Staff
-				<ul class="side_menu_child">
-					<li>Item 1</li>
-					<li>Item 2</li>
-					<li>Item 3</li>
-					<li>Item 4</li>
-				</ul>
-			</li>
-			<li>Other
-				<ul class="side_menu_child">
-					<li>More Stuff</li>
-				</ul>
-			</li>
-			<li>Other x 2
-				<ul class="side_menu_child">
-					<li>More Stuff</li>
-				</ul>
-			</li>
-		</ul>
-	</div>-->	
-	
-	<div id="body">	
-		<div id="content_left">
-			
-			<h3><img id='meal_icon' src="utensils-60x60.png" alt="Place late meal order" style="width:60px;height:60px;">PLACE LATE MEAL ORDER</h3>
-			<p>Please choose one or more meal options:</p>
+	<div class="head">
+		<div class id = "btn">
+			<h2><a href="index.html" class = "btn">LOGOUT</a></h2>
+		</div>	
+    </div>
+    <div class="content">
+		<div class="content">	
+        <img class='meal_icon' src="png/LOGO2.png" alt="Weerona" style="width:90%;">
+        <div class="content">
 			<br>
 
 			<form action="">
-				<input type="checkbox" id="main1" name="main1" value="true"> Main1<br>
-				<input type="checkbox" id="main2" name="main2" value="true"> Main2<br>
-				<input type="checkbox" id="vegan" name="vegan" value="true"> Vegetarian<br>
-				<input type="checkbox" id="fish" name="fish" value="true"> Fish<br>
-				<input type="checkbox" id="veg" name="veg" value="true"> Vegetables<br>
-				<input type="checkbox" id="salad" name="salad" value="true"> Salad<br>
-				<input type="checkbox" id="des" name="des" value="true"> Dessert<br>
-				<br>
-				<input type="submit" id="btnSubmit" name="submit" value ="Submit">
+				<div class="control-group">
+                <label class="control control-checkbox">
+                    Main 1
+                        <input type="checkbox" id="main1" value="true"/>
+                    <div class="control_indicator"></div>
+                </label>
+                <label class="control control-checkbox">
+                    Main 2
+                        <input type="checkbox" id="main2" value="true"/>
+                    <div class="control_indicator"></div>
+                </label>
+                <label class="control control-checkbox">
+                    Vegetarian
+                        <input type="checkbox" id="vegan" value="true"/>
+                    <div class="control_indicator"></div>
+                </label>
+               <label class="control control-checkbox">
+                    Fish
+                        <input type="checkbox" id="fish" value="true"/>
+                    <div class="control_indicator"></div>
+                </label>
+                <label class="control control-checkbox">
+                    Vegetables
+                        <input type="checkbox" id="veg" value="true"/>
+                    <div class="control_indicator"></div>
+                </label>
+                <label class="control control-checkbox">
+                    Salad
+                        <input type="checkbox" />
+                    <div class="control_indicator" id="salad" value="true"></div>
+                </label>
+                <label class="control control-checkbox">
+                    Dessert
+                        <input type="checkbox" />
+                    <div class="control_indicator" id="des" value="true"></div>
+                </label>
+            </div>
+                <br/>
+				<input type="submit" class="btn" name="submit" value ="Submit">
 			</form>
-			
-			<div id="submit_notify">
-				<p>Submitted meal order.</p>
-			</div>
-			
+					
 			<br>
-			<a href="index.html">Login</a>
-			<a href="staff.html">Staff</a>
-		</div>
-		
-		<div id="content_right">
-			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">MEAL CALENDAR</h3>
-			<table>
-			<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-			<tr><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td><td>Main1</td></tr>
-			<tr><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td><td>Main2</td></tr>
-			<tr><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td></tr>
-			<tr><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td><td>Meal1</td></tr>
-			</table>
-		</div>
+			</div>
 	</div>
 	
-	<div id="footer">
-		<p>Weerona College - Page Footer</p>
-		<p>Stuff here...</p>
-	</div>
-</div>	
 </body>
 </html>
