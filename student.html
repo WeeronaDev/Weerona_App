@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>WEE-MEALS - Students</title>
+	<title>Weerona Late Meals</title>
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="css_student.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -28,166 +28,239 @@
 	</script>
 </head>
 
-<body>	
+<body>
 
-	<script async>
+
+	<script>
 		$(function() {		
-			//Check initial auth status		
+			//On page load.		
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-					// User is signed in.						
+					//User is signed in.						
 					console.log("initial auth: user logged in as "+user.displayName);	
-					$("#welcome_banner").show();
-					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");	
+					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");
+					$("#welcome_banner").show();					
+					//Fetch menu items.
+					firebase.database().ref().child('options').once("value", function(snap) {
+						$("#optionText1").html(snap.val().option1);
+						$("#orderText1").html("- "+snap.val().option1);
+						$("#optionText2").html(snap.val().option2);
+						$("#orderText2").html("- "+snap.val().option2);
+						$("#optionText3").html(snap.val().option3);
+						$("#orderText3").html("- "+snap.val().option3);
+						$("#optionText4").html(snap.val().option4);
+						$("#orderText4").html("- "+snap.val().option4);
+						$("#optionText5").html(snap.val().option5);
+						$("#orderText5").html("- "+snap.val().option5);						
+						$("#optionText6").html(snap.val().option6);
+						$("#orderText6").html("- "+snap.val().option6);
+						$("#optionText7").html(snap.val().option7);
+						$("#orderText7").html("- "+snap.val().option7);
+					});	
+					//Fetch current orders.
+					firebase.database().ref().child('orders/'+user.uid).once("value", function(snap) {
+						if (snap.val() == null) {
+							//No order available.
+							console.log("No order present.");
+							$("#orderContent").hide();
+						}
+						else {
+							//User has order.
+							console.log("Order exists");
+							$("#noData").hide();
+							if (snap.val().option1 == false) {
+								$("#orderText1").hide();
+							};
+							if (snap.val().option2 == false) {
+								$("#orderText2").hide();
+							};
+							if (snap.val().option3 == false) {
+								$("#orderText3").hide();
+							};
+							if (snap.val().option4 == false) {
+								$("#orderText4").hide();
+							};
+							if (snap.val().option5 == false) {
+								$("#orderText5").hide();
+							};
+							if (snap.val().option6 == false) {
+								$("#orderText6").hide();
+							};
+							if (snap.val().option7 == false) {
+								$("#orderText7").hide();
+							};
+						}						
+					});						
 				} else {
 					// No user is signed in.
 					console.log("initial auth: user not logged in");	
 					$("#login_banner").show();
+					$("#error_banner").show();
+					$("#errorText").html("Please log-in to access the content on this page.");
+					$("#menu").hide();
+					$("#btnLogout").hide();
 				}
 			});
 			
 			// Order entry			
 			document.getElementById("btnSubmit").addEventListener("click", function(submit) {
-				submit.preventDefault();	
-				var user = firebase.auth().currentUser;
-				if (user) {
-					// User is signed in.	
+				submit.preventDefault();				
+				var option1 = document.getElementById("optCheck1").checked;				
+				var option2 = document.getElementById("optCheck2").checked;			
+				var option3 = document.getElementById("optCheck3").checked;
+				var option4 = document.getElementById("optCheck4").checked;
+				var option5 = document.getElementById("optCheck5").checked;
+				var option6 = document.getElementById("optCheck6").checked;
+				var option7 = document.getElementById("optCheck7").checked;				
+
+				if (option1==false&&option2==false&&option3==false&&option4==false&&option5==false&&option6==false&&option7==false) {
+					$("#error_banner").show();
+					$("#errorText").html("Please select one or more options.");
+				} else {
+					var user = firebase.auth().currentUser;				
 					var currentDate = new Date(); 
 					var date = currentDate.getDate() + "/"
 					+ (currentDate.getMonth()+1)  + "/" 
 					+ currentDate.getFullYear();
 					var time = currentDate.getHours() + ":"  
 					+ currentDate.getMinutes() + ":" 
-					+ currentDate.getSeconds();	
-											
-					var main1 = document.getElementById("main1").checked;
-					var main2 = document.getElementById("main2").checked;
-					var vegan = document.getElementById("vegan").checked;
-					var fish = document.getElementById("fish").checked;
-					var veg = document.getElementById("veg").checked;
-					var salad = document.getElementById("salad").checked;
-					var des = document.getElementById("des").checked;
-					var name = console.log(user.displayName);
-					firebase.database().ref('orders/' + user.uid).set({
-						date: date,
-						time: time,
-						user: user.displayName,
-						main1: main1,
-						main2: main2,
-						vegan: vegan,
-						fish: fish,
-						veg: veg,
-						salad: salad,
-						des: des
+					+ currentDate.getSeconds();												
+					
+					firebase.database().ref().child('orders/' + user.uid).set({
+						lastUpdate: date+" "+time,
+						username: user.displayName,
+						option1: option1,
+						option2: option2,
+						option3: option3,
+						option4: option4,
+						option5: option5,
+						option6: option6,
+						option7: option7,
 					});
 					console.log("order submitted successfully!");
 					$('#submit_notify').slideDown(200);	
-				} else {
-				// No user is signed in.
-					$("#submit_notify").hide();	
-					$("#logout_banner").hide();	
-					$("#error_banner").show();
-					$("#errorText").html("Please sign in to continue.");
-					console.log("cannot submit order: user not signed in!");
+					location.reload();
 				}								
 			});	
 
-			//Sign-out
-		document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
-			firebase.auth().signOut().then(function() {
-				console.log("Signed out");
-				$("#welcome_banner").hide();
-				$("#login_banner").show();
-				$("#logout_banner").show();	
-				window.location.replace("index.html");				
-			}).catch(function(error) {
-				console.log("Error signing out");
-			});
-		});										
-	});
-	</script>
-	
-	<script async>
-		// Dropdown menu animation
-		$(function() {
-			$('ul.drop_menu_parent>li').hover(function() {
-				$(this).children('ul').stop().toggle(200);
-			});
-		});
-	</script>
-	
-	<script async>
-		// Side menu animation
-		$(function() {
-			$('ul.side_menu_parent>li').click(function() {
-				$(this).children('ul').stop().slideToggle(200);
-			});
-		});
-	</script>
-	
-	<script async>
-		//Page display animation
-		$(function() {
-			$('#body, #content_left, #content_right').slideDown(200);
-			$('#output').slideDown(1000);
-		});
-	</script>
-	<div class="head">
-		<div class id = "btn">
-			<h2><a href="index.html" class = "btn">LOGOUT</a></h2>
-		</div>	
-    </div>
-    <div class="content">
-		<div class="content">	
-        <img class='meal_icon' src="png/LOGO2.png" alt="Weerona" style="width:90%;">
-        <div class="content">
-			<br>
+			//Delete order.
+			document.getElementById("btnRemove").addEventListener("click", function(submit) {	
+				var user = firebase.auth().currentUser;	
+				firebase.database().ref().child('orders/' + user.uid).remove().then(function() {
+					console.log("Deleted order");				
+				}).catch(function(error) {
+					console.log("Error deleting order.");
+				});
+			});	
 
-			<form action="">
-				<div class="control-group">
+			//Sign-out
+			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
+				firebase.auth().signOut().then(function() {
+					console.log("Signed out");
+					$("#welcome_banner").hide();
+					$("#login_banner").show();
+					$("#logout_banner").show();	
+					window.location.replace("index.html");				
+				}).catch(function(error) {
+					console.log("Error signing out");
+				});
+			});										
+		});
+	</script>
+
+	<input type="submit" id="btnLogout" class="btn" name="logout" value ="Log-out">					
+	
+	<div class="content">	
+		<img src="png/LOGO2.png" alt="Weerona Logo" style="width:90%;">
+		
+		<div id="login_banner" class="banner">
+			<p>You are not logged in!</p>
+			<form action="index.html">
+				<input type="submit" value="Log-In" />
+			</form>
+		</div>
+			
+		<div id="welcome_banner" class="banner">
+			<p id="welcomeText"></p>
+		</div>
+		
+		<div id="error_banner" class="banner">
+			<p id="errorText"></p>
+		</div>
+		
+		<div id="logout_banner" class="banner">
+			<p>You have been logged out!</p>
+		</div>
+		<br>
+	</div>
+
+	<div id="menu" class="content">
+		<div class="currentOrder">
+			<h1>Your current meal order:</h1>
+
+			<div id="orderContent">
+				<p id="orderText1"></p>
+				<p id="orderText2"></p>
+				<p id="orderText3"></p>
+				<p id="orderText4"></p>
+				<p id="orderText5"></p>
+				<p id="orderText6"></p>
+				<p id="orderText7"></p>
+			</div>
+
+			<p id="noData">No order details to show.</p>			
+		</div>
+
+		<br><br>
+
+		<h1>Create or update your order:</h1>
+
+		<form action="">
+			<div class="">
                 <label class="control control-checkbox">
-                    Main 1
-                        <input type="checkbox" id="main1" value="true"/>
+					<p id="optionText1"></p>
+                        <input type="checkbox" id="optCheck1" name="main1" value="true">
                     <div class="control_indicator"></div>
                 </label>
                 <label class="control control-checkbox">
-                    Main 2
-                        <input type="checkbox" id="main2" value="true"/>
+					<p id="optionText2"></p>
+                        <input type="checkbox" id="optCheck2" name="main2" value="true">
                     <div class="control_indicator"></div>
                 </label>
                 <label class="control control-checkbox">
-                    Vegetarian
-                        <input type="checkbox" id="vegan" value="true"/>
+					<p id="optionText3"></p>
+                        <input type="checkbox" id="optCheck3" name="vegan" value="true">
                     <div class="control_indicator"></div>
                 </label>
                <label class="control control-checkbox">
-                    Fish
-                        <input type="checkbox" id="fish" value="true"/>
+                    <p id="optionText4"></p>
+                        <input type="checkbox" id="optCheck4" name="fish" value="true">
                     <div class="control_indicator"></div>
                 </label>
                 <label class="control control-checkbox">
-                    Vegetables
-                        <input type="checkbox" id="veg" value="true"/>
+					<p id="optionText5"></p>
+                        <input type="checkbox" id="optCheck5" name="veg" value="true">
                     <div class="control_indicator"></div>
                 </label>
                 <label class="control control-checkbox">
-                    Salad
-                        <input type="checkbox" />
-                    <div class="control_indicator" id="salad" value="true"></div>
+					<p id="optionText6"></p>
+                        <input type="checkbox" id="optCheck6" name="salad" value="true">
+                    <div class="control_indicator"></div>
                 </label>
                 <label class="control control-checkbox">
-                    Dessert
-                        <input type="checkbox" />
-                    <div class="control_indicator" id="des" value="true"></div>
+					<p id="optionText7"></p>
+                        <input type="checkbox" id="optCheck7" name="des" value="true">
+                    <div class="control_indicator"></div>
                 </label>
             </div>
                 <br/>
-				<input type="submit" class="btn" name="submit" value ="Submit">
-			</form>
-					
-			<br>
-			</div>
+				<input type="submit" id="btnSubmit" class="btn" name="submit" value ="Submit">
+				<input type="submit" id="btnRemove" class="btn" name="remove" value ="Delete Order">
+		</form>
+
+		<div id="submit_notify">
+			<p>Submitted meal order.</p>
+		</div>
 	</div>
-	
 </body>
 </html>

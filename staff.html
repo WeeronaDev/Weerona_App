@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>WEE-MEALS - Staff</title>
+	<title>Weerona Late Meals</title>
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="css_staff.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -30,124 +30,167 @@
 
 <body>
 
-	<script async>
+	<script>
 		$(function() {		
-			//Check initial auth status		
+			//On page load.	
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
 					// User is signed in.						
 					console.log("initial auth: user logged in as "+user.displayName);	
-					$("#welcome_banner").show();
 					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");	
+					$("#welcome_banner").show();					
+					//Check if user is admin				
+					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
+						console.log(snapshot.val());
+						if (snapshot.val() != null) {
+							console.log("IS ADMIN");
+
+							//Fetch menu headers.
+							firebase.database().ref().child('options').once("value", function(snap) {
+								$("#optionText1").html(snap.val().option1);
+								$("#optionText2").html(snap.val().option2);
+								$("#optionText3").html(snap.val().option3);
+								$("#optionText4").html(snap.val().option4);
+								$("#optionText5").html(snap.val().option5);
+								$("#optionText6").html(snap.val().option6);
+								$("#optionText7").html(snap.val().option7);
+							});	
+
+							//Fetch orders list.
+							firebase.database().ref().child('orders').on('child_added', function(snap) {								
+								console.log("Meals 'n' shit.")
+								var tr = $("<tr></tr>");
+								tr.append($("<td></td>").text(snap.val().lastUpdate));
+								tr.append($("<td></td>").text(snap.val().username));
+								tr.append($("<td></td>").text(snap.val().option1));
+								tr.append($("<td></td>").text(snap.val().option2));
+								tr.append($("<td></td>").text(snap.val().option3));
+								tr.append($("<td></td>").text(snap.val().option4));
+								tr.append($("<td></td>").text(snap.val().option5));
+								tr.append($("<td></td>").text(snap.val().option6));
+								tr.append($("<td></td>").text(snap.val().option7));
+								$("#orders").append(tr);
+								console.log("retrieved meals");
+								$("#noData").hide();																				
+							});							
+
+							//Get last update time.
+							var currentDate = new Date(); 
+							var date = currentDate.getDate() + "/"
+							+ (currentDate.getMonth()+1)  + "/" 
+							+ currentDate.getFullYear();
+							var time = currentDate.getHours() + ":"  
+							+ currentDate.getMinutes() + ":" 
+							+ currentDate.getSeconds();	
+							$("#lastRefresh").html(date+" "+time);
+							$("#content").show();
+						} else {
+							console.log("NOT ADMIN");
+							$("#errorText").html("You do not have permission to view this page.");
+							$("#bad_permission").show();					
+						}
+					});
 				} else {
 					// No user is signed in.
 					console.log("initial auth: user not logged in");	
 					$("#login_banner").show();
+					$("#errorText").html("Please log-in to access the content on this page.");
+					$("#bad_permission").show();
 				}
 			});
 
-			//Sign-out
-		document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
-			firebase.auth().signOut().then(function() {
-				console.log("Signed out");
-				$("#welcome_banner").hide();
-				$("#login_banner").show();
-				$("#logout_banner").show();		
-				window.location.replace("index.html");				
-			}).catch(function(error) {
-				console.log("Error signing out");
+			//Delete orders - button operation.
+			document.getElementById("btnDeleteAll").addEventListener("click", function(submit) {	
+				submit.preventDefault();
+				firebase.database().ref().child('orders').remove().then(function() {
+					console.log("Deleted pending orders.");	
+					location.reload();			
+				}).catch(function(error) {
+					console.log("Error deleting orders.");
+				});
 			});
-		});	
+			document.getElementById("btnDelete").addEventListener("click", function(submit) {	
+				submit.preventDefault();
+				$("#btnDelete").hide();
+				$("#deleteWarn").show();
+			});
+			document.getElementById("btnCancelDel").addEventListener("click", function(submit) {
+				submit.preventDefault();	
+				$("#btnDelete").show();
+				$("#deleteWarn").hide();
+			});	
 
-		//Database read
-		document.getElementById("btnGetOrders").addEventListener("click", function(submit) {
-			submit.preventDefault();
-			var user = firebase.auth().currentUser;
-			if (user) {
-				// User is signed in.	
-				var dbFoodRef = firebase.database().ref('orders');
-				dbFoodRef.on('child_added', function(snap){
-					var tr = $("<tr></tr>");
-					tr.append($("<td></td>").text(snap.val().date));
-					tr.append($("<td></td>").text(snap.val().time));
-					tr.append($("<td></td>").text(snap.val().user));
-					tr.append($("<td></td>").text(snap.val().main1));
-					tr.append($("<td></td>").text(snap.val().main2));
-					tr.append($("<td></td>").text(snap.val().vegan));
-					tr.append($("<td></td>").text(snap.val().fish));
-					tr.append($("<td></td>").text(snap.val().veg));
-					tr.append($("<td></td>").text(snap.val().salad));
-					tr.append($("<td></td>").text(snap.val().des));
-					$("#orders").append(tr);
-					$("#order_load").hide();
-				});	
-				console.log("retrieved meal");
-			} else {
-				// No user is signed in.
-				$("#error_banner").show();
-				$("#errorText").html("You do not have permission to access this resource.");
-				console.log("cannot read orders: user not signed in!");
-			}		
-		});		
-	});
-
+			//Sign-out
+			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
+				firebase.auth().signOut().then(function() {
+					console.log("Signed out");	
+					window.location.replace("index.html");				
+				}).catch(function(error) {
+					console.log("Error signing out");
+				});
+			});
+		});
 	</script>
 	
 	<div id="header">
-		<h1>WEE-MEALS Staff View</h1>
-	</div>
-	
-	<div id="navigation">
-		<p>You are here: <a href="index.html">WEE-MEALS Login</a> >> <a href="student.html">Staff - Manage late meal orders</a></p>
+		<img src="png/LOGO2.png" alt="Weerona Logo" height="100" width="236">
+		<h1>Staff View</h1>
 	</div>
 
-	<div id="login_banner">
-		<p>You are not logged in!</p>
+	<div id="login_banner" class="banner">
+		<p>You are not logged in.</p>
 		<form action="index.html">
 			<input type="submit" value="Log-In" />
 		</form>
 	</div>
 	
-	<div id="welcome_banner">
+	<div id="welcome_banner" class="banner">
 		<p id="welcomeText"></p>
 		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 	</div>
 	
-	<div id="error_banner">
+	<div id="logout_banner" class="banner">
+		<p>You have been logged out.</p>
+	</div>
+	
+	<div id="bad_permission" class="banner">
 		<p id="errorText"></p>
 	</div>
 
-	<div id="logout_banner">
-		<p>You have been logged out!</p>
-	</div>
-		
 	<div id="content">
 		<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
 		<p><b>Pending late meal orders:</b></p>
 		<br>
-		<table border='1' id="orders">
+		<table id="orders">
 			<tr>
-				<th>Date</th>
-				<th>Time</th>
+				<th>Submitted</th>
 				<th>Name</th>
-				<th>Main1</th>
-				<th>Main2</th>
-				<th>Vegetarian</th>
-				<th>Fish</th>
-				<th>Vegetables</th>
-				<th>Salad</th>
-				<th>Dessert</th>
+				<th><p id="optionText1"></p></th>
+				<th><p id="optionText2"></p></th>
+				<th><p id="optionText3"></p></th>
+				<th><p id="optionText4"></p></th>
+				<th><p id="optionText5"></p></th>
+				<th><p id="optionText6"></p></th>
+				<th><p id="optionText7"></p></th>
 			</tr>
 		</table>
 		<br>
+		<p id="noData"><b>No orders to show.</b></p>
+		<br>
 
-		<form action="">
-			<input type="submit" id="btnGetOrders" name="get_orders" value ="Retrieve Orders">
-		</form>
-
-		<div id="order_load">
-			<p><b>Loading orders...Please wait</b></p>
+		<div id="deleteWarn">
+			<p><b>WARNING: This will permanently erase all late meal orders! Continue?</b></p>
+			<input type="submit" id="btnDeleteAll" name="delconfirm" value ="Delete Orders">
+			<input type="submit" id="btnCancelDel" name="delcancel" value ="Cancel">
 		</div>
+
+		<input type="submit" id="btnDelete" name="delete" value ="Clear Order List">
+		<br><br>
+		<p><b>Reload the page to refresh orders list.</b></p>
+		<br>
+		<p><b>Orders current at:</b></p>
+		<p id="lastRefresh"></p>
+
 		<br><br>
 		<a href="index.html">Login</a>
 		<a href="student.html">Students</a>

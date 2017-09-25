@@ -1,9 +1,10 @@
 body {
 	margin: 0px;
 	padding: 0px;
+	background-color: #2B308E;
 }
 #header {
-	height: 72px;
+	height: 80px;
 	width: 995px;
 	padding-top: 5px;
 	padding-left: 5px;
@@ -13,18 +14,8 @@ body {
 	margin-right: auto;
 	background-color: #0081EC;
 }
-#navigation {
-	width: 980px;
-	height: 25px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #5DADE2;
-}
 #content {
+	display: none;
 	width: 970px;
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -34,55 +25,34 @@ body {
 	margin-bottom: 0px;
 	margin-left: auto;
 	margin-right: auto;
-	background-color: pink;
+	background-color: #FFFFFF;
+}
+.banner {
+	display: none;
+	width: 984px;
+	height: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: green;
+	border: 3px solid #005000;
+	color: black;
 }
 #login_banner {
-	display: none;
-	width: 980px;
-	height: 50px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
 	background-color: orange;
+	border: 2px solid #835400;
 }
-#welcome_banner {
-	display: none;
-	width: 980px;
-	height: 50px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: green;
-}
-#error_banner {
-	display: none;
-	width: 980px;
-	height: 25px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
+#bad_permission {
+	border: 2px solid #800000;
 	background-color: red;
 }
-#logout_banner {
+#deleteWarn {
 	display: none;
-	width: 980px;
-	height: 25px;
-	padding-top: 10px;
-	padding-left: 20px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: green;
+	color: red;
 }
 p {
 	margin: 0px;
@@ -90,16 +60,12 @@ p {
 	font-size:100%;
 }
 h1 {
-	color: black;
-	margin-top: 0px;
-	font-family:"Arial", Times, serif; 
-	font-size:200%;
-}
-h2 {
-	color: #FFC300;
-	margin-top: 7px;
+	margin-top: 10px;
+	margin-right: 500px;
+	float: right;
+	color: white;
 	font-family:"Helvetica", Times, serif; 
-	font-size:100%;
+	font-size: 40px;
 }
 h3 {
 	color: black;
@@ -113,16 +79,4 @@ table, th, td{
 	padding: 10px;
 	font-family: "Helvetica", Times, serif; 
 	font-size:100%;
-}
-a:link, a:visited, a:active {
-	background-color: none; 
-	font-family:"Helvetica", Times, serif; 
-	font-size:100%;
-	color:black;
-} 
-a:hover {
-	background-color: #FFC300; 
-	font-family:"Helvetica", Times, serif; 
-	font-size:100%;
-	color:black;
 }
