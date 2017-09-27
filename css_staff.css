@@ -42,17 +42,31 @@ body {
 	border: 3px solid #005000;
 	color: black;
 }
+.btn {
+	font-family: Arial;
+	color: #2B308E;
+	font-size: 20px;
+	background: #F8E251;
+	padding: 10px 20px 10px 20px;
+	float: right;
+	cursor: pointer;
+}
+.btn:hover {
+	background: #EBCC00;
+}
 #login_banner {
 	background-color: orange;
 	border: 2px solid #835400;
 }
-#bad_permission {
+#error_banner {
 	border: 2px solid #800000;
 	background-color: red;
 }
-#deleteWarn {
-	display: none;
+.warn {
 	color: red;
+}
+.hidden {
+	display: none;
 }
 p {
 	margin: 0px;

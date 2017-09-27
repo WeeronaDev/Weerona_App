@@ -36,10 +36,24 @@
 			//On page load.		
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-					//User is signed in.						
-					console.log("initial auth: user logged in as "+user.displayName);	
-					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");
-					$("#welcome_banner").show();					
+
+					//Check if admin - display link to staff page
+					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
+						if (snapshot.val() != null) {
+							console.log("IS ADMIN");
+							$("#btnToStaff").show();	
+						}
+					});
+
+					//User is signed in - get alias.
+					firebase.database().ref().child('users/'+user.uid).once("value", function(snap) {
+						var alias = snap.val().alias;
+						console.log("alias: "+alias);
+						console.log("initial auth: user logged in as "+user.displayName);	
+						$("#welcomeText").html("Logged in as: "+alias+" ("+user.email+")");
+						$("#welcome_banner").show();
+					});						
+								
 					//Fetch menu items.
 					firebase.database().ref().child('options').once("value", function(snap) {
 						$("#optionText1").html(snap.val().option1);
@@ -138,7 +152,6 @@
 						option7: option7,
 					});
 					console.log("order submitted successfully!");
-					$('#submit_notify').slideDown(200);	
 					location.reload();
 				}								
 			});	
@@ -149,7 +162,8 @@
 				firebase.database().ref().child('orders/' + user.uid).remove().then(function() {
 					console.log("Deleted order");				
 				}).catch(function(error) {
-					console.log("Error deleting order.");
+					$("#error_banner").show();
+					$("#errorText").html("There was a problem removing your order. Try refreshing the page.");
 				});
 			});	
 
@@ -164,7 +178,11 @@
 				}).catch(function(error) {
 					console.log("Error signing out");
 				});
-			});										
+			});	
+			document.getElementById("btnToStaff").addEventListener("click", function(submit) {
+				submit.preventDefault();	
+				window.location.replace("staff.html");
+			});									
 		});
 	</script>
 
@@ -256,6 +274,7 @@
                 <br/>
 				<input type="submit" id="btnSubmit" class="btn" name="submit" value ="Submit">
 				<input type="submit" id="btnRemove" class="btn" name="remove" value ="Delete Order">
+				<input type="submit" id="btnToStaff" class="btn hidden" name="staff" value ="To Staff View">
 		</form>
 
 		<div id="submit_notify">

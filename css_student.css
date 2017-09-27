@@ -21,6 +21,9 @@ body {
 .btn:hover {
 	background: #EBCC00;
 }
+.hidden {
+    display: none;
+}
 /*Check Boxes*/
 .control {
     font-family: arial;

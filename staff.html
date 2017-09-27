@@ -31,14 +31,28 @@
 <body>
 
 	<script>
+		//Prevent default submit when enter is pressed
+		$(document).ready(function() {
+			$(window).keydown(function(event){
+				if(event.keyCode == 13) {
+					event.preventDefault();
+					return false;
+				}
+			});
+		});
+
 		$(function() {		
 			//On page load.	
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-					// User is signed in.						
-					console.log("initial auth: user logged in as "+user.displayName);	
-					$("#welcomeText").html("Logged in as: "+user.displayName+" ("+user.email+")");	
-					$("#welcome_banner").show();					
+					//User is signed in - get alias.
+					firebase.database().ref().child('users/'+user.uid).once("value", function(snap) {
+						var alias = snap.val().alias;
+						console.log("alias: "+alias);
+						console.log("initial auth: user logged in as "+user.displayName);	
+						$("#welcomeText").html("Logged in as: "+alias+" ("+user.email+")");
+						$("#welcome_banner").show();
+					});						
 					//Check if user is admin				
 					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
 						console.log(snapshot.val());
@@ -87,7 +101,7 @@
 						} else {
 							console.log("NOT ADMIN");
 							$("#errorText").html("You do not have permission to view this page.");
-							$("#bad_permission").show();					
+							$("#error_banner").show();					
 						}
 					});
 				} else {
@@ -95,20 +109,13 @@
 					console.log("initial auth: user not logged in");	
 					$("#login_banner").show();
 					$("#errorText").html("Please log-in to access the content on this page.");
-					$("#bad_permission").show();
+					$("#error_banner").show();
 				}
 			});
 
+			
+
 			//Delete orders - button operation.
-			document.getElementById("btnDeleteAll").addEventListener("click", function(submit) {	
-				submit.preventDefault();
-				firebase.database().ref().child('orders').remove().then(function() {
-					console.log("Deleted pending orders.");	
-					location.reload();			
-				}).catch(function(error) {
-					console.log("Error deleting orders.");
-				});
-			});
 			document.getElementById("btnDelete").addEventListener("click", function(submit) {	
 				submit.preventDefault();
 				$("#btnDelete").hide();
@@ -119,14 +126,72 @@
 				$("#btnDelete").show();
 				$("#deleteWarn").hide();
 			});	
+			document.getElementById("btnDeleteAll").addEventListener("click", function(submit) {	
+				submit.preventDefault();
+				firebase.database().ref().child('orders').remove().then(function() {
+					location.reload();			
+				}).catch(function(error) {
+					$("#errorText").html("There was a problem clearing orders. Try refreshing the page.");
+					$("#error_banner").show();
+				});
+			});
+
+			//Change menu - button operations
+			document.getElementById("btnChangeMenu").addEventListener("click", function(submit) {	
+				submit.preventDefault();
+				$("#viewMenu").hide();
+				$("#changeMenu").show();
+			});
+			document.getElementById("btnChangeCancel").addEventListener("click", function(submit) {	
+				submit.preventDefault();
+				$("#viewMenu").show();
+				$("#changeMenu").hide();
+			});
+			//Update menu
+			document.getElementById("btnSetMenu").addEventListener("click", function(submit) {
+				submit.preventDefault();				
+				var menuOption1 = $("#menuOption1").val().trim();
+				var menuOption2 = $("#menuOption2").val().trim();
+				var menuOption3 = $("#menuOption3").val().trim();
+				var menuOption4 = $("#menuOption4").val().trim();
+				var menuOption5 = $("#menuOption5").val().trim();
+				var menuOption6 = $("#menuOption6").val().trim();
+				var menuOption7 = $("#menuOption7").val().trim();
+
+				//Check all fields are filled in
+				if (!menuOption1||!menuOption2||!menuOption3||!menuOption4||!menuOption5||!menuOption6||!menuOption7) {
+					console.log("invalid input");
+					$("#submitError").show();
+				} else {					
+					firebase.database().ref().child("options").update({
+						option1: menuOption1,
+						option2: menuOption2,
+						option3: menuOption3,
+						option4: menuOption4,
+						option5: menuOption5,
+						option6: menuOption6,
+						option7: menuOption7
+					});
+					location.reload();
+				}									
+			});
+
+			//Page navigation buttons	
+			document.getElementById("btnStudent").addEventListener("click", function(submit) {	
+				window.location.replace("student.html");
+			});
+			document.getElementById("btnLogin").addEventListener("click", function(submit) {	
+				window.location.replace("index.html");
+			});
+
 
 			//Sign-out
 			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
-				firebase.auth().signOut().then(function() {
-					console.log("Signed out");	
+				firebase.auth().signOut().then(function() {	
 					window.location.replace("index.html");				
 				}).catch(function(error) {
-					console.log("Error signing out");
+					$("#errorText").html("There was a problem signing you out.");
+					$("#error_banner").show();
 				});
 			});
 		});
@@ -153,47 +218,78 @@
 		<p>You have been logged out.</p>
 	</div>
 	
-	<div id="bad_permission" class="banner">
+	<div id="error_banner" class="banner">
 		<p id="errorText"></p>
 	</div>
 
 	<div id="content">
-		<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
-		<p><b>Pending late meal orders:</b></p>
-		<br>
-		<table id="orders">
-			<tr>
-				<th>Submitted</th>
-				<th>Name</th>
-				<th><p id="optionText1"></p></th>
-				<th><p id="optionText2"></p></th>
-				<th><p id="optionText3"></p></th>
-				<th><p id="optionText4"></p></th>
-				<th><p id="optionText5"></p></th>
-				<th><p id="optionText6"></p></th>
-				<th><p id="optionText7"></p></th>
-			</tr>
-		</table>
-		<br>
-		<p id="noData"><b>No orders to show.</b></p>
-		<br>
+		<div id="viewMenu">
+			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
+			<p><b>Pending late meal orders:</b></p>
+			<br>
+			<table id="orders">
+				<tr>
+					<th>Submitted</th>
+					<th>Name</th>
+					<th><p id="optionText1"></p></th>
+					<th><p id="optionText2"></p></th>
+					<th><p id="optionText3"></p></th>
+					<th><p id="optionText4"></p></th>
+					<th><p id="optionText5"></p></th>
+					<th><p id="optionText6"></p></th>
+					<th><p id="optionText7"></p></th>
+				</tr>
+			</table>
+			<br>
+			<p id="noData"><b>No orders to show.</b></p>
+			<br>
 
-		<div id="deleteWarn">
-			<p><b>WARNING: This will permanently erase all late meal orders! Continue?</b></p>
-			<input type="submit" id="btnDeleteAll" name="delconfirm" value ="Delete Orders">
-			<input type="submit" id="btnCancelDel" name="delcancel" value ="Cancel">
+			<div id="deleteWarn" class="warn hidden">
+				<p><b>WARNING: This will permanently erase all late meal orders! Continue?</b></p>
+				<input type="submit" id="btnDeleteAll" name="delconfirm" value ="Delete Orders">
+				<input type="submit" id="btnCancelDel" name="delcancel" value ="Cancel">
+			</div>
+
+			<input type="submit" id="btnDelete" name="delete" value ="Clear Order List">
+			<br><br>
+			<input type="submit" id="btnChangeMenu" name="opensetmenu" value ="Update Menu">
+			<br><br>
+			<p><b>Reload the page to refresh orders list.</b></p>
+			<br>
 		</div>
 
-		<input type="submit" id="btnDelete" name="delete" value ="Clear Order List">
-		<br><br>
-		<p><b>Reload the page to refresh orders list.</b></p>
+		<div id="changeMenu" class="hidden">
+			<h3>CHANGE MENU</h3>
+			<p>Option 1:</p>
+			<input type="text" id="menuOption1" name="name"><br><br>
+			<p>Option 2:</p>
+			<input type="text" id="menuOption2" name="name"><br><br>
+			<p>Option 3:</p>
+			<input type="text" id="menuOption3" name="name"><br><br>
+			<p>Option 4:</p>
+			<input type="text" id="menuOption4" name="name"><br><br>
+			<p>Option 5:</p>
+			<input type="text" id="menuOption5" name="name"><br><br>
+			<p>Option 6:</p>
+			<input type="text" id="menuOption6" name="name"><br><br>
+			<p>Option 7:</p>
+			<input type="text" id="menuOption7" name="name"><br><br>
+
+			<p><b>NOTE: Option selections in existing orders will not be affected.</b></p><br>
+		
+			<p id="submitError" class="warn hidden"><b>All meal options must be set to update menu!</b></p><br>		
+			<input type="submit" id="btnSetMenu" name="setmenu" value ="Apply Changes">
+			<input type="submit" id="btnChangeCancel" name="cancelsetmenu" value ="Cancel">
+		</div>
+
 		<br>
 		<p><b>Orders current at:</b></p>
 		<p id="lastRefresh"></p>
 
 		<br><br>
-		<a href="index.html">Login</a>
-		<a href="student.html">Students</a>
+		<p><b>Navigation:</b></p>
+		<input type="submit" id="btnLogin" value ="Return to Login Page - No sign-out">
+		<input type="submit" id="btnStudent" value ="View as Student">
 	</div>	
 </body>
 </html>
