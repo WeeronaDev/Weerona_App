@@ -10,7 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="css_student.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-	<script async>
+	<script>
 		// Initialize Firebase
 		$(function() {
 			console.log("initialize database");
@@ -36,7 +36,6 @@
 			//On page load.		
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-
 					//Check if admin - display link to staff page
 					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
 						if (snapshot.val() != null) {
@@ -49,62 +48,68 @@
 					firebase.database().ref().child('users/'+user.uid).once("value", function(snap) {
 						var alias = snap.val().alias;
 						console.log("alias: "+alias);
-						console.log("initial auth: user logged in as "+user.displayName);	
-						$("#welcomeText").html("Logged in as: "+alias+" ("+user.email+")");
-						$("#welcome_banner").show();
-					});						
-								
-					//Fetch menu items.
-					firebase.database().ref().child('options').once("value", function(snap) {
-						$("#optionText1").html(snap.val().option1);
-						$("#orderText1").html("- "+snap.val().option1);
-						$("#optionText2").html(snap.val().option2);
-						$("#orderText2").html("- "+snap.val().option2);
-						$("#optionText3").html(snap.val().option3);
-						$("#orderText3").html("- "+snap.val().option3);
-						$("#optionText4").html(snap.val().option4);
-						$("#orderText4").html("- "+snap.val().option4);
-						$("#optionText5").html(snap.val().option5);
-						$("#orderText5").html("- "+snap.val().option5);						
-						$("#optionText6").html(snap.val().option6);
-						$("#orderText6").html("- "+snap.val().option6);
-						$("#optionText7").html(snap.val().option7);
-						$("#orderText7").html("- "+snap.val().option7);
-					});	
-					//Fetch current orders.
-					firebase.database().ref().child('orders/'+user.uid).once("value", function(snap) {
-						if (snap.val() == null) {
-							//No order available.
-							console.log("No order present.");
-							$("#orderContent").hide();
-						}
-						else {
-							//User has order.
-							console.log("Order exists");
-							$("#noData").hide();
-							if (snap.val().option1 == false) {
-								$("#orderText1").hide();
-							};
-							if (snap.val().option2 == false) {
-								$("#orderText2").hide();
-							};
-							if (snap.val().option3 == false) {
-								$("#orderText3").hide();
-							};
-							if (snap.val().option4 == false) {
-								$("#orderText4").hide();
-							};
-							if (snap.val().option5 == false) {
-								$("#orderText5").hide();
-							};
-							if (snap.val().option6 == false) {
-								$("#orderText6").hide();
-							};
-							if (snap.val().option7 == false) {
-								$("#orderText7").hide();
-							};
-						}						
-					});						
+
+						if (alias) {
+							//Alias exists - Load page as normal!!							
+							console.log("initial auth: user logged in as "+user.displayName);	
+							$("#loginText").html(alias);							
+
+							//Fetch menu items.
+							firebase.database().ref().child('options').once("value", function(snap) {
+								$("#optionText1").html(snap.val().option1);
+								$("#orderText1").html("- "+snap.val().option1);
+								$("#optionText2").html(snap.val().option2);
+								$("#orderText2").html("- "+snap.val().option2);
+								$("#optionText3").html(snap.val().option3);
+								$("#orderText3").html("- "+snap.val().option3);
+								$("#optionText4").html(snap.val().option4);
+								$("#orderText4").html("- "+snap.val().option4);
+								$("#optionText5").html(snap.val().option5);
+								$("#orderText5").html("- "+snap.val().option5);						
+								$("#optionText6").html(snap.val().option6);
+								$("#orderText6").html("- "+snap.val().option6);
+								$("#optionText7").html(snap.val().option7);
+								$("#orderText7").html("- "+snap.val().option7);
+							});	
+							//Fetch current orders.
+							firebase.database().ref().child('orders/'+user.uid).once("value", function(snap) {
+								if (snap.val() == null) {
+									//No order available.
+									console.log("No order present.");
+									$("#orderContent").hide();
+								}
+								else {
+									//User has order.
+									console.log("Order exists");
+									$("#noData").hide();
+									if (snap.val().option1 == false) {
+										$("#orderText1").hide();
+									};
+									if (snap.val().option2 == false) {
+										$("#orderText2").hide();
+									};
+									if (snap.val().option3 == false) {
+										$("#orderText3").hide();
+									};
+									if (snap.val().option4 == false) {
+										$("#orderText4").hide();
+									};
+									if (snap.val().option5 == false) {
+										$("#orderText5").hide();
+									};
+									if (snap.val().option6 == false) {
+										$("#orderText6").hide();
+									};
+									if (snap.val().option7 == false) {
+										$("#orderText7").hide();
+									};
+								}						
+							});	
+						} else {
+							//No alias - It needs to be set - Redirect to login.
+							window.location.href = "index.html";		
+						}	
+					});																					
 				} else {
 					// No user is signed in.
 					console.log("initial auth: user not logged in");	
@@ -140,19 +145,21 @@
 					+ currentDate.getMinutes() + ":" 
 					+ currentDate.getSeconds();												
 					
-					firebase.database().ref().child('orders/' + user.uid).set({
-						lastUpdate: date+" "+time,
-						username: user.displayName,
-						option1: option1,
-						option2: option2,
-						option3: option3,
-						option4: option4,
-						option5: option5,
-						option6: option6,
-						option7: option7,
+					firebase.database().ref().child('users/'+user.uid).once("value", function(userNode) {
+						firebase.database().ref().child('orders/'+user.uid).set({
+							lastUpdate: date+" "+time,
+							dispName: userNode.val().alias,
+							username: user.displayName,
+							option1: option1,
+							option2: option2,
+							option3: option3,
+							option4: option4,
+							option5: option5,
+							option6: option6,
+							option7: option7
+						});
+						location.reload();
 					});
-					console.log("order submitted successfully!");
-					location.reload();
 				}								
 			});	
 
@@ -171,7 +178,6 @@
 			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
 				firebase.auth().signOut().then(function() {
 					console.log("Signed out");
-					$("#welcome_banner").hide();
 					$("#login_banner").show();
 					$("#logout_banner").show();	
 					window.location.replace("index.html");				
@@ -186,8 +192,12 @@
 		});
 	</script>
 
-	<input type="submit" id="btnLogout" class="btn" name="logout" value ="Log-out">					
-	
+	<div class="logout_head">
+		<input type="submit" id="btnLogout" class="btn" name="logout" value ="Sign-Out">	
+		<br><br><br>			
+		<p id="loginText"></p>
+	</div>
+
 	<div class="content">	
 		<img src="png/LOGO2.png" alt="Weerona Logo" style="width:90%;">
 		
@@ -196,10 +206,6 @@
 			<form action="index.html">
 				<input type="submit" value="Log-In" />
 			</form>
-		</div>
-			
-		<div id="welcome_banner" class="banner">
-			<p id="welcomeText"></p>
 		</div>
 		
 		<div id="error_banner" class="banner">

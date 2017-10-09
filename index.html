@@ -8,10 +8,9 @@
 	<title>Weerona Late Meals</title>
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="css_login.css" />
-	<script src="https://use.fontawesome.com/149fc431b2.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-	<script async>
+	<script>
 		// Initialize Firebase
 		$(function() {
 			console.log("initialize database");
@@ -24,14 +23,13 @@
 				messagingSenderId: "1093710876765"
 			};
 			firebase.initializeApp(config);
-			var database = firebase.database();
 		});
 	</script>
 </head>
 
 <body>
-	<script>
-		//Prevent default submit when enter is pressed
+	<script async>
+		//Prevent default submit when enter is pressed/for text boxes.
 		$(document).ready(function() {
 			$(window).keydown(function(event){
 				if(event.keyCode == 13) {
@@ -45,23 +43,35 @@
 			//Check initial auth status		
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
-					// User is signed in.						
+					//User is signed in - get alias.
 					console.log("initial auth: user logged in as "+user.displayName);	
-					//Check if admin
-					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
-						if (snapshot.val() != null) {
-							console.log("IS ADMIN");
-							$("#userSignedIn").show();
-							$("#userIsAdmin").show();
-						} else {								
-							console.log("NOT ADMIN");	
-							$("#userSignedIn").show();
+					
+					firebase.database().ref().child('users/'+user.uid+'/alias').once("value", function(snap) {
+
+						if (snap.val()) {					
+							//Alias exists - check if admin
+							firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
+								if (snapshot.val() != null) {
+									console.log("IS ADMIN");
+									$("#userSignedIn").show();
+									$("#userIsAdmin").show();
+								} else {								
+									console.log("NOT ADMIN");	
+									$("#userSignedIn").show();
+								}
+							});	
+						} else {
+							//Verify name
+							$("#dispName").html(user.displayName);
+							$("#loginButtons").hide();
+							$("#verifyName").show();
+							$("#isCorrect").show();	
 						}
-					});					
+					});	
+
 				} else {
-					// No user is signed in.
+					//No user is signed in - load normal.
 					console.log("initial auth: user not logged in");	
-					//SHOW NOTHING - LOAD AS USUAL
 				}
 			});	
 			
@@ -70,9 +80,9 @@
 				var provider = new firebase.auth.GoogleAuthProvider();						
 				console.log("google sign in!");					
 				firebase.auth().signInWithPopup(provider).then(function(result) {
-					// This gives you a Google Access Token. You can use it to access the Google API.
+					//This gives you a Google Access Token. You can use it to access the Google API.
 					var token = result.credential.accessToken;
-					// The signed-in user info.
+					//The signed-in user info.
 					user = result.user;
 					console.log("Logged in as: "+user.displayName);	
 					setUserDatabaseEntry(user);
@@ -83,7 +93,7 @@
 					console.log(error.message);	
 					console.log(error.email);
 					console.log(error.credential);
-					
+
 					$("#error_banner").show();
 					$("#errorText").html("There was a problem signing in with Google: "+errorCode);
 				});
@@ -94,14 +104,14 @@
 				var provider = new firebase.auth.FacebookAuthProvider();						
 				console.log("Facebook Sign-In");					
 				firebase.auth().signInWithPopup(provider).then(function(result) {
-					// This gives you a Google Access Token. You can use it to access the Google API.
+					//This gives you a Google Access Token. You can use it to access the Google API.
 					var token = result.credential.accessToken;
-					// The signed-in user info.
+					//The signed-in user info.
 					user = result.user;
 					console.log("Logged in as: "+user.displayName);	
 					setUserDatabaseEntry(user);
 				}).catch(function(error) {
-					// Handle Errors here.
+					//Handle Errors here.
 					var errorCode = error.code;
 					console.log(error.code);	
 					console.log(error.message);	
@@ -114,11 +124,12 @@
 				});
 			});						
 			
-			//User entry
+			//Sets the users database entry.
 			function setUserDatabaseEntry(user) {
-				//Check if first login
+				//Check if this is the first login.
 				firebase.database().ref().child('users/'+user.uid+'/alias').once("value", function(snapshot) {
-					console.log(snapshot.val());
+				
+					console.log("Check if first login: "+snapshot.val());
 
 					if (snapshot.val() != null) {
 						console.log("Existing account --> redirect to relevant page");				
@@ -142,10 +153,8 @@
 								window.location.replace("student.html");
 							}
 						});
-					} else {
-						
+					} else {	
 						console.log("New user!! --> Prompt for name.");	
-
 						var currentDate = new Date(); 
 						var date = currentDate.getDate() + "/" + (currentDate.getMonth()+1)  + "/" + currentDate.getFullYear();
 						var time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();	
@@ -162,7 +171,7 @@
 						$("#verifyName").show();
 						$("#isCorrect").show();	
 						$("#userSignedIn").hide();
-						$("#userIsAdmin").hide();			
+						$("#userIsAdmin").hide();		
 					}
 				});
 			};	
@@ -186,7 +195,8 @@
 			});	
 
 			document.getElementById("btnSetAlias").addEventListener("click", function(submit) {
-				submit.preventDefault();				
+				submit.preventDefault();
+				var user = firebase.auth().currentUser;				
 				var alias = $("#newDispName").val();	
 
 				//Make sure something has been entered
@@ -221,16 +231,21 @@
 		});
 	</script>
 
+
+
 <div class="login-form">
+	<div class="login-form"></div>
+		<img src="png/LOGO2.png" alt="Weerona Logo" style="width:100%;">
+	<div>	
+
  	<div class="login-position">
-		<h1>WEERONA<br>Late Meals</h1>
 		
 		<div id="error_banner">
 			<p id="errorText"></p>
 		</div>
 
 		<div id="loginButtons">
-			<p><b>Please select the login provider you would like to use:</b></p>
+			<p><b>Please sign-in to continue. Select the login provider you would like to use.</b></p>
 
 			<button id="btnLoginFacebook" class="loginBtn loginBtnFacebook">
 				Facebook
@@ -256,7 +271,7 @@
 				<form>
 					Please enter your full name here:<br>
 					<input type="text" id="newDispName" name="name"><br>
-					NOTE: You cannot change your display name once it is set.<br>
+					NOTE: You cannot change your display name after it has been set.<br>
 				</form>
 				<br>
 				<input type="submit" id="btnSetAlias" name="set" value ="Submit - Continue">

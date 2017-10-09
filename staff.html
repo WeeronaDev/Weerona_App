@@ -46,47 +46,63 @@
 			firebase.auth().onAuthStateChanged(function(user) {
 				if (user) {
 					//User is signed in - get alias.
-					firebase.database().ref().child('users/'+user.uid).once("value", function(snap) {
-						var alias = snap.val().alias;
+					firebase.database().ref().child('users/'+user.uid).once("value", function(userNode) {
+						var alias = userNode.val().alias;
 						console.log("alias: "+alias);
 						console.log("initial auth: user logged in as "+user.displayName);	
 						$("#welcomeText").html("Logged in as: "+alias+" ("+user.email+")");
 						$("#welcome_banner").show();
 					});						
 					//Check if user is admin				
-					firebase.database().ref().child('admins/'+user.uid).once("value", function(snapshot) {
-						console.log(snapshot.val());
-						if (snapshot.val() != null) {
+					firebase.database().ref().child('admins/'+user.uid).once("value", function(adminNode) {
+						console.log(adminNode.val());
+						if (adminNode.val() != null) {
 							console.log("IS ADMIN");
 
-							//Fetch menu headers.
-							firebase.database().ref().child('options').once("value", function(snap) {
-								$("#optionText1").html(snap.val().option1);
-								$("#optionText2").html(snap.val().option2);
-								$("#optionText3").html(snap.val().option3);
-								$("#optionText4").html(snap.val().option4);
-								$("#optionText5").html(snap.val().option5);
-								$("#optionText6").html(snap.val().option6);
-								$("#optionText7").html(snap.val().option7);
-							});	
+							//Fetch menu content.
+							firebase.database().ref().child('options').once("value", function(optionsNode) {
+								var option1 = optionsNode.val().option1;
+								var option2 = optionsNode.val().option2;
+								var option3 = optionsNode.val().option3;
+								var option4 = optionsNode.val().option4;
+								var option5 = optionsNode.val().option5;
+								var option6 = optionsNode.val().option6;
+								var option7 = optionsNode.val().option7;
 
-							//Fetch orders list.
-							firebase.database().ref().child('orders').on('child_added', function(snap) {								
-								console.log("Meals 'n' shit.")
-								var tr = $("<tr></tr>");
-								tr.append($("<td></td>").text(snap.val().lastUpdate));
-								tr.append($("<td></td>").text(snap.val().username));
-								tr.append($("<td></td>").text(snap.val().option1));
-								tr.append($("<td></td>").text(snap.val().option2));
-								tr.append($("<td></td>").text(snap.val().option3));
-								tr.append($("<td></td>").text(snap.val().option4));
-								tr.append($("<td></td>").text(snap.val().option5));
-								tr.append($("<td></td>").text(snap.val().option6));
-								tr.append($("<td></td>").text(snap.val().option7));
-								$("#orders").append(tr);
-								console.log("retrieved meals");
-								$("#noData").hide();																				
-							});							
+								//Fetch orders list.
+								firebase.database().ref().child('orders').on('child_added', function(orderNode) {																	
+									var record = $("<p></p>");									
+									record.append($("<h2></h2>").text(orderNode.val().dispName));
+									record.append($("<h2></h2>").text("Submitted: "+orderNode.val().lastUpdate));						
+
+									if (orderNode.val().option1 == true) {
+										record.append($("<p></p>").text("- "+option1));
+									}
+									if (orderNode.val().option2 == true) {
+										record.append($("<p></p>").text("- "+option2));
+									}
+									if (orderNode.val().option3 == true) {
+										record.append($("<p></p>").text("- "+option3));
+									}
+									if (orderNode.val().option4 == true) {
+										record.append($("<p></p>").text("- "+option4));
+									}
+									if (orderNode.val().option5 == true) {
+										record.append($("<p></p>").text("- "+option5));
+									}
+									if (orderNode.val().option6 == true) {
+										record.append($("<p></p>").text("- "+option6));
+									}
+									if (orderNode.val().option7 == true) {
+										record.append($("<p></p>").text("- "+option7));
+									}
+									
+									record.append($("<br>"));
+									$("#orders").append(record);
+									console.log("retrieved meals");
+									$("#noData").hide();																			
+								});	
+							});												
 
 							//Get last update time.
 							var currentDate = new Date(); 
@@ -112,8 +128,6 @@
 					$("#error_banner").show();
 				}
 			});
-
-			
 
 			//Delete orders - button operation.
 			document.getElementById("btnDelete").addEventListener("click", function(submit) {	
@@ -180,10 +194,6 @@
 			document.getElementById("btnStudent").addEventListener("click", function(submit) {	
 				window.location.replace("student.html");
 			});
-			document.getElementById("btnLogin").addEventListener("click", function(submit) {	
-				window.location.replace("index.html");
-			});
-
 
 			//Sign-out
 			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
@@ -211,7 +221,6 @@
 	
 	<div id="welcome_banner" class="banner">
 		<p id="welcomeText"></p>
-		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 	</div>
 	
 	<div id="logout_banner" class="banner">
@@ -227,19 +236,9 @@
 			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
 			<p><b>Pending late meal orders:</b></p>
 			<br>
-			<table id="orders">
-				<tr>
-					<th>Submitted</th>
-					<th>Name</th>
-					<th><p id="optionText1"></p></th>
-					<th><p id="optionText2"></p></th>
-					<th><p id="optionText3"></p></th>
-					<th><p id="optionText4"></p></th>
-					<th><p id="optionText5"></p></th>
-					<th><p id="optionText6"></p></th>
-					<th><p id="optionText7"></p></th>
-				</tr>
-			</table>
+			<div id="orders">
+				<!--Populated by scripts, no default content.-->			
+			</div>
 			<br>
 			<p id="noData"><b>No orders to show.</b></p>
 			<br>
@@ -288,7 +287,7 @@
 
 		<br><br>
 		<p><b>Navigation:</b></p>
-		<input type="submit" id="btnLogin" value ="Return to Login Page - No sign-out">
+		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 		<input type="submit" id="btnStudent" value ="View as Student">
 	</div>	
 </body>

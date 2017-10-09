@@ -27,6 +27,9 @@ body {
 	margin-right: auto;
 	background-color: #FFFFFF;
 }
+#orders {
+	margin-left: 20px;	
+}
 .banner {
 	display: none;
 	width: 984px;
@@ -81,16 +84,14 @@ h1 {
 	font-family:"Helvetica", Times, serif; 
 	font-size: 40px;
 }
+h2 {
+	margin: 0px;
+	font-family:"Helvetica", Times, serif; 
+	font-size:100%;
+}
 h3 {
 	color: black;
 	margin-top: 0px;
 	font-family:"Helvetica", Times, serif; 
 	font-size:150%;
-}
-table, th, td{
-	border: 1px solid black;
-	border-collapse: collapse;
-	padding: 10px;
-	font-family: "Helvetica", Times, serif; 
-	font-size:100%;
 }
