@@ -194,7 +194,7 @@
 
 	<div class="logout_head">
 		<input type="submit" id="btnLogout" class="btn" name="logout" value ="Sign-Out">	
-		<br><br><br>			
+		<br><br>			
 		<p id="loginText"></p>
 	</div>
 
@@ -234,58 +234,73 @@
 
 			<p id="noData">No order details to show.</p>			
 		</div>
-
 		<br><br>
-
 		<h1>Create or update your order:</h1>
 
 		<form action="">
 			<div class="">
                 <label class="control control-checkbox">
-					<p id="optionText1"></p>
-                        <input type="checkbox" id="optCheck1" name="main1" value="true">
+					<!--These "indented" class divs prevent text overlapping checkboxes-->
+					<div class="indented">
+						<p id="optionText1"></p>
+					</div>
+                    <input type="checkbox" id="optCheck1" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                 <label class="control control-checkbox">
-					<p id="optionText2"></p>
-                        <input type="checkbox" id="optCheck2" name="main2" value="true">
+					<div class="indented">
+						<p id="optionText2"></p>
+					</div>
+                    <input type="checkbox" id="optCheck2" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                 <label class="control control-checkbox">
-					<p id="optionText3"></p>
-                        <input type="checkbox" id="optCheck3" name="vegan" value="true">
+					<div class="indented">
+						<p id="optionText3"></p>
+					</div>
+                    <input type="checkbox" id="optCheck3" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                <label class="control control-checkbox">
-                    <p id="optionText4"></p>
-                        <input type="checkbox" id="optCheck4" name="fish" value="true">
+					<div class="indented">
+						<p id="optionText4"></p>
+					</div>
+                    <input type="checkbox" id="optCheck4" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                 <label class="control control-checkbox">
-					<p id="optionText5"></p>
-                        <input type="checkbox" id="optCheck5" name="veg" value="true">
+					<div class="indented">
+						<p id="optionText5"></p>
+					</div>
+                    <input type="checkbox" id="optCheck5" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                 <label class="control control-checkbox">
-					<p id="optionText6"></p>
-                        <input type="checkbox" id="optCheck6" name="salad" value="true">
+					<div class="indented">
+						<p id="optionText6"></p>
+					</div>
+                    <input type="checkbox" id="optCheck6" value="true">
                     <div class="control_indicator"></div>
-                </label>
+				</label>
+				
                 <label class="control control-checkbox">
-					<p id="optionText7"></p>
-                        <input type="checkbox" id="optCheck7" name="des" value="true">
+					<div class="indented">
+						<p id="optionText7"></p>
+					</div>
+                    <input type="checkbox" id="optCheck7" value="true">
                     <div class="control_indicator"></div>
                 </label>
             </div>
                 <br/>
-				<input type="submit" id="btnSubmit" class="btn" name="submit" value ="Submit">
+				<input type="submit" id="btnSubmit" class="btn" name="submit" value ="Submit Order">
 				<input type="submit" id="btnRemove" class="btn" name="remove" value ="Delete Order">
-				<input type="submit" id="btnToStaff" class="btn hidden" name="staff" value ="To Staff View">
+				<input type="submit" id="btnToStaff" class="btn hidden" name="staff" value ="STAFF">
 		</form>
-
-		<div id="submit_notify">
-			<p>Submitted meal order.</p>
-		</div>
 	</div>
 </body>
 </html>

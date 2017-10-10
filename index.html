@@ -245,7 +245,8 @@
 		</div>
 
 		<div id="loginButtons">
-			<p><b>Please sign-in to continue. Select the login provider you would like to use.</b></p>
+			<p><b>Sign-in or switch account. Please select the login provider you would like to use:</b></p>
+			<br>
 
 			<button id="btnLoginFacebook" class="loginBtn loginBtnFacebook">
 				Facebook
@@ -255,6 +256,7 @@
 				Google
 			</button>
 		</div>
+		<br><br>
 
 		<div id="verifyName" class="hidden">
 			<p><b>Verify Name</b><br>Your display name is what will be used to attribute your meal orders to you. If you do not use your real 
@@ -263,8 +265,8 @@
 			<div id="isCorrect">
 				<p>Is this correct?</p>
 				<b><p id="dispName"></p></b>
-				<input type="submit" id="btnCorrect" name="correct" value ="Yes - Continue">
-				<input type="submit" id="btnUpdate" name="update" value ="No - Update">
+				<input type="submit" id="btnCorrect" class="btn" name="correct" value ="Yes - Continue">
+				<input type="submit" id="btnUpdate" class="btn" name="update" value ="No - Update">
 			</div>
 
 			<div id="setName" class="hidden">
@@ -274,20 +276,20 @@
 					NOTE: You cannot change your display name after it has been set.<br>
 				</form>
 				<br>
-				<input type="submit" id="btnSetAlias" name="set" value ="Submit - Continue">
-				<input type="submit" id="btnCancelAlias" name="cancelSet" value ="Cancel">
+				<input type="submit" id="btnSetAlias" class="btn" name="set" value ="Submit - Continue">
+				<input type="submit" id="btnCancelAlias" class="btn" name="cancelSet" value ="Cancel">
 			</div>				
 		</div>
 
 		<div id="userSignedIn" class="hidden">
 			<p><b>You are already signed in!<b></p>
-			<input type="submit" id="btnToStudent" name="toStudent" value ="Go to Students Page">
+			<input type="submit" id="btnToStudent" class="btn" name="toStudent" value ="Go to Students Page">
 			<br><br>
 			<div id="userIsAdmin" class="hidden">
-				<input type="submit" id="btnToStaff" name="toStaff" value ="Go to Staff Page">
+				<input type="submit" id="btnToStaff" class="btn" name="toStaff" value ="Go to Staff Page">
 				<br><br>
 			</div>
-			<input type="submit" id="btnLogout" name="logout" value ="Sign-out">	
+			<input type="submit" id="btnLogout" class="btn" name="logout" value ="Sign-out">	
   		</div>
 	</div>
 </div>
