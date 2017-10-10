@@ -6,8 +6,8 @@ body {
 .content {
 	margin-left: auto;
 	margin-right: auto;
-	width: 80%;
-	max-width: 850px;
+	width: 90%;
+	max-width: 800px;
 	background-color: #2B308E;
 }
 .btn {
@@ -126,7 +126,7 @@ h2 {
 	color: #FFC300;
 	margin-top: 7px;
 	font-family:"Helvetica", Times, serif; 
-	font-size:100%;
+	font-size: 100%;
 }
 h3 {
 	color: black;
