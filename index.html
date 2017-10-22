@@ -79,7 +79,7 @@
 			document.getElementById("btnLoginGoogle").addEventListener("click", function(signIn) {			
 				var provider = new firebase.auth.GoogleAuthProvider();						
 				console.log("google sign in!");					
-				firebase.auth().signInWithRedirect(provider).then(function(result) {
+				firebase.auth().signInWithPopup(provider).then(function(result) {
 					//This gives you a Google Access Token. You can use it to access the Google API.
 					var token = result.credential.accessToken;
 					//The signed-in user info.
@@ -103,7 +103,7 @@
 			document.getElementById("btnLoginFacebook").addEventListener("click", function(signIn) {			
 				var provider = new firebase.auth.FacebookAuthProvider();						
 				console.log("Facebook Sign-In");					
-				firebase.auth().signInWithRedirect(provider).then(function(result) {
+				firebase.auth().signInWithPopup(provider).then(function(result) {
 					//This gives you a Google Access Token. You can use it to access the Google API.
 					var token = result.credential.accessToken;
 					//The signed-in user info.
