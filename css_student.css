@@ -9,6 +9,7 @@ body {
 	width: 90%;
 	max-width: 800px;
 	background-color: #2B308E;
+	color: #FFFFFF;
 }
 .btn {
 	font-family: Arial;
@@ -27,9 +28,6 @@ body {
 }
 .indented {
 	margin-left: 25px;
-}
-.currentOrder {
-	color: #FFFFFF;
 }
 /*Check Boxes*/
 .control {

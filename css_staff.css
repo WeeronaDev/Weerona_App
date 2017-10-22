@@ -15,7 +15,6 @@ body {
 	background-color: #0081EC;
 }
 #content {
-	display: none;
 	width: 970px;
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -66,7 +65,10 @@ body {
 	background-color: red;
 }
 .warn {
+	width: 500px;
+	padding: 5px;
 	color: red;
+	border: 2px solid red;
 }
 .hidden {
 	display: none;

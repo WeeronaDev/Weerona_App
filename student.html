@@ -70,18 +70,22 @@
 								$("#orderText6").html("- "+snap.val().option6);
 								$("#optionText7").html(snap.val().option7);
 								$("#orderText7").html("- "+snap.val().option7);
+								$("#loadMenu").hide();
+								$("#menuContent").show();
 							});	
 							//Fetch current orders.
 							firebase.database().ref().child('orders/'+user.uid).once("value", function(snap) {
 								if (snap.val() == null) {
 									//No order available.
 									console.log("No order present.");
-									$("#orderContent").hide();
+									$("#loadOrder").hide();
+									$("#noData").show();
 								}
 								else {
 									//User has order.
-									console.log("Order exists");
-									$("#noData").hide();
+									console.log("Order exists");					
+									$("#loadOrder").hide();	
+									$("#orderContent").show();
 									if (snap.val().option1 == false) {
 										$("#orderText1").hide();
 									};
@@ -218,26 +222,26 @@
 	</div>
 
 	<div id="menu" class="content">
-		<div class="currentOrder">
-			<h1>Your current meal order:</h1>
+		
+		<h1>Your current meal order:</h1>
 
-			<div id="orderContent">
-				<p id="orderText1"></p>
-				<p id="orderText2"></p>
-				<p id="orderText3"></p>
-				<p id="orderText4"></p>
-				<p id="orderText5"></p>
-				<p id="orderText6"></p>
-				<p id="orderText7"></p>
-			</div>
-
-			<p id="noData">No order details to show.</p>			
+		<div id="orderContent" class="hidden">
+			<p id="orderText1"></p>
+			<p id="orderText2"></p>
+			<p id="orderText3"></p>
+			<p id="orderText4"></p>
+			<p id="orderText5"></p>
+			<p id="orderText6"></p>
+			<p id="orderText7"></p>
 		</div>
+		<p id="loadOrder">Loading current order...</p>
+		<p id="noData" class="hidden">No order details to show.</p>			
+		
 		<br><br>
 		<h1>Create or update your order:</h1>
 
 		<form action="">
-			<div class="">
+			<div id="menuContent" class="hidden">
                 <label class="control control-checkbox">
 					<!--These "indented" class divs prevent text overlapping checkboxes-->
 					<div class="indented">
@@ -293,8 +297,9 @@
 					</div>
                     <input type="checkbox" id="optCheck7" value="true">
                     <div class="control_indicator"></div>
-                </label>
-            </div>
+				</label>
+			</div>
+			<p id="loadMenu">Loading menu items...</p>
                 <br/>
 				<input type="submit" id="btnSubmit" class="btn" name="submit" value ="Submit Order">
 				<input type="submit" id="btnRemove" class="btn" name="remove" value ="Delete Order">

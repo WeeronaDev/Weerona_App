@@ -50,7 +50,7 @@
 						var alias = userNode.val().alias;
 						console.log("alias: "+alias);
 						console.log("initial auth: user logged in as "+user.displayName);	
-						$("#welcomeText").html("Logged in as: "+alias+" ("+user.email+")");
+						$("#welcomeText").html("Logged in as: "+alias+"");
 						$("#welcome_banner").show();
 					});						
 					//Check if user is admin				
@@ -68,9 +68,12 @@
 								var option5 = optionsNode.val().option5;
 								var option6 = optionsNode.val().option6;
 								var option7 = optionsNode.val().option7;
+								$("#loadOrderList").hide();	
+								$("#noData").show();	
 
 								//Fetch orders list.
-								firebase.database().ref().child('orders').on('child_added', function(orderNode) {																	
+								firebase.database().ref().child('orders').on('child_added', function(orderNode) {
+									$("#noData").hide();
 									var record = $("<p></p>");									
 									record.append($("<h2></h2>").text(orderNode.val().dispName));
 									record.append($("<h2></h2>").text("Submitted: "+orderNode.val().lastUpdate));						
@@ -95,12 +98,10 @@
 									}
 									if (orderNode.val().option7 == true) {
 										record.append($("<p></p>").text("- "+option7));
-									}
-									
+									}									
 									record.append($("<br>"));
 									$("#orders").append(record);
-									console.log("retrieved meals");
-									$("#noData").hide();																			
+									console.log("retrieved meals");																																									
 								});	
 							});												
 
@@ -113,7 +114,6 @@
 							+ currentDate.getMinutes() + ":" 
 							+ currentDate.getSeconds();	
 							$("#lastRefresh").html(date+" "+time);
-							$("#content").show();
 						} else {
 							console.log("NOT ADMIN");
 							$("#errorText").html("You do not have permission to view this page.");
@@ -155,6 +155,17 @@
 				submit.preventDefault();
 				$("#viewMenu").hide();
 				$("#changeMenu").show();
+				firebase.database().ref().child('options').once("value", function(menu) {
+					document.getElementById("menuOption1").value = menu.val().option1;
+					document.getElementById("menuOption2").value = menu.val().option2;
+					document.getElementById("menuOption3").value = menu.val().option3;
+					document.getElementById("menuOption4").value = menu.val().option4;
+					document.getElementById("menuOption5").value = menu.val().option5;
+					document.getElementById("menuOption6").value = menu.val().option6;
+					document.getElementById("menuOption7").value = menu.val().option7;
+					$("#loadMenu").hide();
+					$("#changeMenuInput").show();
+				});
 			});
 			document.getElementById("btnChangeCancel").addEventListener("click", function(submit) {	
 				submit.preventDefault();
@@ -236,22 +247,23 @@
 			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
 			<p><b>Pending late meal orders:</b></p>
 			<br>
+			<p id="loadOrderList">Loading orders...</p>
+			<p id="noData" class="hidden">There are currently no orders to display.</p>
 			<div id="orders">
-				<!--Populated by scripts, no default content.-->			
+				<!--Populated by scripts on load, no default content, do not remove.-->			
 			</div>
-			<br>
-			<p id="noData"><b>No orders to show.</b></p>
-			<br>
+			<br><br>
 
 			<div id="deleteWarn" class="warn hidden">
-				<p><b>WARNING: This will permanently erase all late meal orders! Continue?</b></p>
-				<input type="submit" id="btnDeleteAll" name="delconfirm" value ="Delete Orders">
-				<input type="submit" id="btnCancelDel" name="delcancel" value ="Cancel">
+				<p><b>WARNING: This will permanently delete all late meal orders!<br>Do you want to continue?</b></p>
+				<br>
+				<input type="submit" id="btnDeleteAll" value ="Delete Orders">
+				<input type="submit" id="btnCancelDel" value ="Cancel">
 			</div>
 
-			<input type="submit" id="btnDelete" name="delete" value ="Clear Order List">
+			<input type="submit" id="btnDelete" value ="Clear Order List">
 			<br><br>
-			<input type="submit" id="btnChangeMenu" name="opensetmenu" value ="Update Menu">
+			<input type="submit" id="btnChangeMenu" value ="Update Menu">
 			<br><br>
 			<p><b>Reload the page to refresh orders list.</b></p>
 			<br>
@@ -259,26 +271,29 @@
 
 		<div id="changeMenu" class="hidden">
 			<h3>CHANGE MENU</h3>
-			<p>Option 1:</p>
-			<input type="text" id="menuOption1" name="name"><br><br>
-			<p>Option 2:</p>
-			<input type="text" id="menuOption2" name="name"><br><br>
-			<p>Option 3:</p>
-			<input type="text" id="menuOption3" name="name"><br><br>
-			<p>Option 4:</p>
-			<input type="text" id="menuOption4" name="name"><br><br>
-			<p>Option 5:</p>
-			<input type="text" id="menuOption5" name="name"><br><br>
-			<p>Option 6:</p>
-			<input type="text" id="menuOption6" name="name"><br><br>
-			<p>Option 7:</p>
-			<input type="text" id="menuOption7" name="name"><br><br>
+			<p id="loadMenu">Loading...</p>
+			<div id="changeMenuInput" class="hidden">
+				<p>Option 1:</p>
+				<input type="text" id="menuOption1" name="name"><br><br>
+				<p>Option 2:</p>
+				<input type="text" id="menuOption2" name="name"><br><br>
+				<p>Option 3:</p>
+				<input type="text" id="menuOption3" name="name"><br><br>
+				<p>Option 4:</p>
+				<input type="text" id="menuOption4" name="name"><br><br>
+				<p>Option 5:</p>
+				<input type="text" id="menuOption5" name="name"><br><br>
+				<p>Option 6:</p>
+				<input type="text" id="menuOption6" name="name"><br><br>
+				<p>Option 7:</p>
+				<input type="text" id="menuOption7" name="name"><br><br>
 
-			<p><b>NOTE: Option selections in existing orders will not be affected.</b></p><br>
-		
-			<p id="submitError" class="warn hidden"><b>All meal options must be set to update menu!</b></p><br>		
-			<input type="submit" id="btnSetMenu" name="setmenu" value ="Apply Changes">
-			<input type="submit" id="btnChangeCancel" name="cancelsetmenu" value ="Cancel">
+				<p><b>NOTE: Option selections in existing orders will not be affected.</b></p><br>
+			
+				<p id="submitError" class="warn hidden"><b>All meal options must be set to update menu!</b></p><br>		
+				<input type="submit" id="btnSetMenu" name="setmenu" value ="Apply Changes">
+				<input type="submit" id="btnChangeCancel" name="cancelsetmenu" value ="Cancel">
+			</div>
 		</div>
 
 		<br>
