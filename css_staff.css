@@ -97,3 +97,18 @@ h3 {
 	font-family:"Helvetica", Times, serif; 
 	font-size:150%;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #orders, #orders * {
+    visibility: visible;
+    page-break-inside: avoid;
+  }
+  #orders {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

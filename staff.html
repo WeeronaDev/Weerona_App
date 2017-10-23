@@ -206,6 +206,11 @@
 				window.location.replace("student.html");
 			});
 
+			//Print button
+			document.getElementById("btnPrint").addEventListener("click", function(print) {	
+     			window.print();
+			});
+
 			//Sign-out
 			document.getElementById("btnLogout").addEventListener("click", function(signOut) {	
 				firebase.auth().signOut().then(function() {	
@@ -304,6 +309,7 @@
 		<p><b>Navigation:</b></p>
 		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 		<input type="submit" id="btnStudent" value ="View as Student">
+		<input type="button" id="btnPrint" value ="Print">
 	</div>	
 </body>
 </html>
