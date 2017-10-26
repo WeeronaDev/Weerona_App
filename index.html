@@ -138,7 +138,7 @@
 						var time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();	
 
 						firebase.database().ref('users/' + user.uid).update({
-							lastLogin: date+" "+time,
+							lastLogin: firebase.database.ServerValue.TIMESTAMP,
 							username: user.displayName,
 							providerData: user.providerData
 						});
@@ -160,7 +160,7 @@
 						var time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();	
 
 						firebase.database().ref('users/' + user.uid).set({
-							lastLogin: date+" "+time,
+							lastLogin: firebase.database.ServerValue.TIMESTAMP,
 							username: user.displayName,
 							providerData: user.providerData
 						});

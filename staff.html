@@ -74,9 +74,10 @@
 								//Fetch orders list.
 								firebase.database().ref().child('orders').on('child_added', function(orderNode) {
 									$("#noData").hide();
+									var date = new Date(orderNode.val().lastUpdate);
 									var record = $("<p></p>");									
-									record.append($("<h2></h2>").text(orderNode.val().dispName));
-									record.append($("<h2></h2>").text("Submitted: "+orderNode.val().lastUpdate));						
+									record.append($("<h2></h2>").text(orderNode.val().alias));
+									record.append($("<h2></h2>").text("Submitted: "+date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()));						
 
 									if (orderNode.val().option1 == true) {
 										record.append($("<p></p>").text("- "+option1));
@@ -106,14 +107,15 @@
 							});												
 
 							//Get last update time.
-							var currentDate = new Date(); 
-							var date = currentDate.getDate() + "/"
-							+ (currentDate.getMonth()+1)  + "/" 
-							+ currentDate.getFullYear();
-							var time = currentDate.getHours() + ":"  
-							+ currentDate.getMinutes() + ":" 
-							+ currentDate.getSeconds();	
-							$("#lastRefresh").html(date+" "+time);
+							firebase.database().ref().child('meta').update({
+								lastStaffRefresh: firebase.database.ServerValue.TIMESTAMP
+							});
+
+							firebase.database().ref().child('meta').once("value", function(meta) {
+								var date = new Date(meta.val().lastStaffRefresh);
+								$("#lastRefresh").html(date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds());
+							});
+
 						} else {
 							console.log("NOT ADMIN");
 							$("#errorText").html("You do not have permission to view this page.");
@@ -248,6 +250,7 @@
 	</div>
 
 	<div id="content">
+		<p id=serverTime></p>
 		<div id="viewMenu">
 			<h3><img id='meal_icon' src="calendar-60x60.png" alt="Meal calendar" style="width:60px;height:60px;">VIEW LATE MEAL ORDERS</h3>
 			<p><b>Pending late meal orders:</b></p>
@@ -266,7 +269,8 @@
 				<input type="submit" id="btnCancelDel" value ="Cancel">
 			</div>
 
-			<input type="submit" id="btnDelete" value ="Clear Order List">
+			<input type="button" id="btnPrint" value ="Print Orders">
+			<input type="submit" id="btnDelete" value ="Clear Orders">
 			<br><br>
 			<input type="submit" id="btnChangeMenu" value ="Update Menu">
 			<br><br>
@@ -309,7 +313,6 @@
 		<p><b>Navigation:</b></p>
 		<input type="submit" id="btnLogout" name="logout" value ="Log-Out">
 		<input type="submit" id="btnStudent" value ="View as Student">
-		<input type="button" id="btnPrint" value ="Print">
 	</div>	
 </body>
 </html>
